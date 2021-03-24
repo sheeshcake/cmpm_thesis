@@ -16,15 +16,15 @@
                                 <div class="text-center">
                                     <h1 class="h4 text-gray-900 mb-4">Login To CMPM!</h1>
                                 </div>
-                                @if(isset($data))
-                                <div class="alert alert-{{ $data[0]->status }}">
-                                    {{ $data[0]->msg }}
+                                @if(Session::has('msg'))
+                                <div class="alert alert-{{ Session::get('status') }}">
+                                    {{ Session::get('msg') }}
                                 </div>
                                 @endif
                                 <form class="user" method="post" action="{{ route('login') }}">
                                     @csrf
                                     <div class="form-group">
-                                        <input type="text" class="form-control form-control-user" name="username" aria-describedby="emailHelp" placeholder="Enter Username">
+                                        <input type="text" class="form-control form-control-user" name="username" value="{{ old('username') }}" aria-describedby="emailHelp" placeholder="Enter Username">
                                     </div>
                                     <div class="form-group">
                                         <input type="password" class="form-control form-control-user" name="password" placeholder="Password">

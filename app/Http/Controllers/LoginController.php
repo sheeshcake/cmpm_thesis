@@ -26,12 +26,12 @@ class LoginController extends Controller
     public function DoLogin(Request $request){
         $rules = array(
             'username' => 'required|alphaNum|min:3',
-            'password' => 'required|alphaNum|min:3' // password can only be alphanumeric and has to be greater than 3 characters
+            'password' => 'required|alpha_dash|min:3' // password can only be alphanumeric and has to be greater than 3 characters
         );
         $validator = Validator::make($request->all(),$rules);
         if($validator->fails()){
             return Redirect::back()->withInput($request->input())->with([
-                'msg' => 'Username or Password is incorrect.',
+                'msg' => 'Username or Password Error.',
                 'status' => 'danger'
             ]);
         }else{

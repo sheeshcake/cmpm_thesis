@@ -11,6 +11,7 @@
 
 @section('content')
 <form action="{{ route('addemployee') }}" method="POST">
+@csrf
     <div class="row">
         <input type="submit" name="submit" value="Save" class="btn btn-lg btn-primary ml-auto mb-3 mr-5">
     </div>
@@ -36,7 +37,7 @@
                             <div class="form-group row">
                                 <div class="col">
                                     <label for="user_contact_number">Contact Number</label>
-                                    <input type="number" max="11" class="form-control" name="user_contact_number" id="user_contact_number" required>
+                                    <input type="number" max="09999999999" class="form-control" name="user_contact_number" id="user_contact_number" required>
                                 </div>
                                 <div class="col">
                                     <label for="email">Email</label>
@@ -63,7 +64,7 @@
                                 </div>
                                 <div class="col">
                                     <label for="user_regligion">Religion</label>
-                                    <input type="text" name="user_regligion" class="form-control" id="user_regligion" required>
+                                    <input type="text" name="user_religion" class="form-control" id="user_religion" required>
                                 </div>
                             </div>
                             <div class="form-group row">
