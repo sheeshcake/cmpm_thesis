@@ -19,7 +19,7 @@ class CreateTasksTable extends Migration
             $table->string("task_name");
             $table->string("task_status");
             $table->string("task_priority");
-            $table->string("employee_id");
+            $table->string("user_id");
             $table->string("task_date_start");
             $table->string("task_date_end");
             $table->timestamps();

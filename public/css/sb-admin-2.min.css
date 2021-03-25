@@ -489,6 +489,10 @@ pre code {
     max-height: 340px;
     overflow-y: scroll;
 }
+.scrollable{
+    overflow-y: auto;
+    margin-bottom: 10%;
+}
 .container,
 .container-fluid,
 .container-lg,
@@ -10283,6 +10287,9 @@ form.user .btn-user {
     animation: noise-anim-2 3s infinite linear alternate-reverse;
 }
 footer.sticky-footer {
+    position: fixed;
+    width: 90%;
+    bottom: 0;
     padding: 2rem 0;
     flex-shrink: 0;
 }

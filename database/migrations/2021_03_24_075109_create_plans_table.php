@@ -17,6 +17,8 @@ class CreatePlansTable extends Migration
             $table->id();
             $table->foreignId("project_id");
             $table->string("plan_name");
+            $table->string("plan_priority");
+            $table->string("plan_dependency");
             $table->string("plan_date_start");
             $table->string("plan_date_end");
             $table->timestamps();
