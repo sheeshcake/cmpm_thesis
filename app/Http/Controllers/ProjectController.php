@@ -7,6 +7,7 @@ use App\Models\Projects;
 use App\Models\Plans;
 use App\Models\Tasks;
 use App\Models\User;
+use App\Models\Clients;
 
 use Auth;
 
@@ -20,11 +21,12 @@ class ProjectController extends Controller
         $users = User::where("role" , "=", "foreman")
                     ->orWhere("role", "=", "civilengineer")
                     ->get();
-        $clients = User::where("role", "=", "clie")
+        $clients = Clients::all();
         return view("layout." . Auth::user()->role . ".add-project")
                 ->with("data", [
                     "role" => ucfirst(Auth::user()->role),
                     "users" => $users,
+                    "clients" => $clients,
                     "page" => "Add Project"
                     ]);
     }

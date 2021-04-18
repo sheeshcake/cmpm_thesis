@@ -48,7 +48,7 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Tools:</h6>
             <a class="collapse-item" href="{{ route('addemployee') }}">Add Employees</a>
-            <a class="collapse-item" href="{{ route('allemployees') }}">Show All Employees</a>
+            <a class="collapse-item" href="{{ route('employees') }}">Show All Employees</a>
         </div>
     </div>
 </li>

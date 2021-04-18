@@ -11,6 +11,6 @@
 
 @section('content')
     <div class="card">
-        <h1>Hello This is {{ $data["role"] }}</h1>
+        <h1>Hello This is Project Manager</h1>
     </div>
 @endsection

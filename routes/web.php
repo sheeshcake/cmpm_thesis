@@ -20,50 +20,30 @@ use Illuminate\Http\Controllers\ProjectsController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+    Route::group(['middleware' => ['auth'], 'guard' => ['admin']],function(){
+        Route::get("/employee/{id}", "EmployeeController@ShowEmployee")->name("employee");
+        Route::prefix("/employees")->group(function(){
+            Route::get("/", "EmployeeController@ShowAllEmployees")->name("employees");
+            Route::get("/addemployee", "EmployeeController@ShowAddEmployee")->name("addemployee");
+            Route::post("/addemployee", "EmployeeController@AddEmployee")->name("addemployee");
+            Route::post("/removeemployee", "EmployeeController@RemoveEmployee")->name("removeemployee");
+            Route::post("/updateemployee", "EmployeeController@UpdateEmployee")->name("updateemployee");
+        });
+    });
+    Route::group(['middleware' => ['auth'], 'guard'=>['projectmanager', 'admin']], function(){
+        Route::get("/dashboard", "ProjectManagerController@ShowDashboard")->name("dashboard");
+        Route::prefix("/projects")->group(function(){
+            Route::get("/", "ProjectController@ShowAllProjects")->name("projects");
+            Route::get("/newproject", "ProjectController@ShowAddProject")->name("newproject");
+            Route::post("/addproject", "ProjectController@AddProject")->name("addproject");
+            Route::post("/removeproject", "ProjectController@RemoveProject")->name("removeproject");
+            Route::post("/updateproject", "ProjectController@UpdateProject")->name("updateproject");
+        });
+    });
 
-Route::group(['middleware' => ['auth']], function(){
-    Route::group(['guard' => ['admin']],function(){
-        Route::prefix('/admin')->group(function(){
-            Route::get("/dashboard", "AdminController@ShowDashboard")->name("dashboard");
-            Route::get("/projects", "AdminController@ShowDashboard")->name("projects");
-            Route::get("/employee/{id}", "EmployeeController@ShowEmployee")->name("employee");
-            Route::prefix("/employees")->group(function(){
-                Route::get("/allemployees", "EmployeeController@ShowAllEmployees")->name("allemployees");
-                Route::get("/addemployee", "EmployeeController@ShowAddEmployee")->name("addemployee");
-                Route::post("/addemployee", "EmployeeController@AddEmployee")->name("addemployee");
-                Route::post("/removeemployee", "EmployeeController@RemoveEmployee")->name("removeemployee");
-                Route::post("/updateemployee", "EmployeeController@UpdateEmployee")->name("updateemployee");
-            });
-        });
+    Route::group(['middleware' => ['auth'], 'guard' => ['projectmanager']], function(){
+        
     });
-    Route::prefix("/civilengineer")->group(function(){
-        Route::get("/dashboard", "CivilEngineerController@ShowDashboard")->name("dashboard");
-        // Route::prefix("/employees")->group(function(){
-        //     Route::get("/projects", "ProjectController@ShowAllProjects")->name("allprojects");
-        //     Route::get("/addproject", "ProjectController@ShowAddProject")->name("addproject");
-        //     Route::post("/addproject", "ProjectController@AddProject")->name("addproject");
-        //     Route::post("/removeproject", "ProjectController@RemoveProject")->name("removeproject");
-        //     Route::post("/updateproject", "ProjectController@UpdateProject")->name("updateproject");
-        // });
-    });
-    Route::group(['guard' => ['projectmanager']], function(){
-        Route::prefix("/projectmanager")->group(function(){
-            Route::get("/dashboard", "ProjectManagerController@ShowDashboard")->name("dashboard");
-            Route::prefix("/projects")->group(function(){
-                Route::get("/", "ProjectController@ShowAllProjects")->name("allprojects");
-                Route::get("/newproject", "ProjectController@ShowAddProject")->name("newproject");
-                Route::post("/addproject", "ProjectController@AddProject")->name("addproject");
-                Route::post("/removeproject", "ProjectController@RemoveProject")->name("removeproject");
-                Route::post("/updateproject", "ProjectController@UpdateProject")->name("updateproject");
-            });
-            Route::prefix("/clients")->group(function(){
-                Route::get("/", "ClientController@ShowAllClients")->name("allclients");
-                Route::get("/newclient", "ClientController@ShowAddClient")->name("newclient");
-                Route::post("/addclient", "ClientController@AddClient")->name("addclient");
-            });
-        });
-    });
-});
 
 
 Route::prefix('/login')->group(function(){

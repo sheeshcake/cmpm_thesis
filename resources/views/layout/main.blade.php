@@ -9,7 +9,7 @@
             </div>
             <div class="card">
                 <div class="card-header">
-                    <h1>System Featrues</h1>
+                    <h1>System Featrues and Users</h1>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -20,6 +20,7 @@
                                 <a class="list-group-item list-group-item-action" id="list-tk-list" data-toggle="list" href="#list-tk" role="tab" aria-controls="tk">Time Keeper</a>
                                 <a class="list-group-item list-group-item-action" id="list-civil-list" data-toggle="list" href="#list-civil" role="tab" aria-controls="civil">Civil Engineer</a>
                                 <a class="list-group-item list-group-item-action" id="list-pm-list" data-toggle="list" href="#list-pm" role="tab" aria-controls="pm">Project Manager</a>
+                                <a class="list-group-item list-group-item-action" id="list-foreman-list" data-toggle="list" href="#list-foreman" role="tab" aria-controls="foreman">Foreman</a>
                                 <a class="list-group-item list-group-item-action" id="list-expediter-list" data-toggle="list" href="#list-expediter" role="tab" aria-controls="expediter">Expediter </a>
                                 <a class="list-group-item list-group-item-action" id="list-client-list" data-toggle="list" href="#list-client" role="tab" aria-controls="client">Client </a>
                             </div>
@@ -42,6 +43,9 @@
                                 <div class="tab-pane fade" id="list-pm" role="tabpanel" aria-labelledby="list-pm-list">
                                     <p>Project Manager mao ni ang mo plano sa project ug mag manage sa time frame</p>
                                     <a href="{{ route('loginprojectmanager') }}" class="btn btn-primary">Login</a>
+                                </div>
+                                <div class="tab-pane fade" id="list-foreman" role="tabpanel" aria-labelledby="list-foreman-list">
+                                    <p>Foreman Mao ni sila ang hatagan always sa task tas sila na bahala mo sugo sa mga laborers, mason, etc..</p>
                                 </div>
                                 <div class="tab-pane fade" id="list-expediter" role="tabpanel" aria-labelledby="list-expediter-list">
                                     <p>Expediter mao ni ang mo manage sa mga supplies</p>
