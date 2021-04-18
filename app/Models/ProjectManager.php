@@ -17,6 +17,7 @@ class ProjectManager extends Model
      * @var array
      */
     protected $guard = "projectmanager";
+    protected $table = 'users';
     
     protected $fillable = [
         'l_name',

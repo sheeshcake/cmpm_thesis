@@ -37,47 +37,49 @@
                     </div>
                 </div>
                 <hr>
-                <div class="row" id="plan_input">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="plan_name_input">Plan Name</label>
-                            <input type="text" id="plan_name_input" class="form-control" placeholder="Plan Name" required>
+                <form action="#" id="plan-details">
+                    <div class="row" id="plan_input">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="plan_name_input">Plan Name</label>
+                                <input type="text" id="plan_name_input" class="form-control" placeholder="Plan Name" required>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="plan_date_start">Plan Date Start</label>
-                            <input type="date" id="plan_date_start" class="form-control" required>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="plan_date_start">Plan Date Start</label>
+                                <input type="date" id="plan_date_start" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="plan_date_end">Plan Date End</label>
+                                <input type="date" id="plan_date_end" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="plan_parent">Plan Dependencies</label>
+                                <select id="plan_parent" class="custom-select">
+                                    <option value="" disabled selected>Select Dependencies</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="plan_priority">Plan Priority</label>
+                                <select id="plan_priority" class="custom-select">
+                                    <option value="high">High</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="low">Low</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="plan_date_end">Plan Date End</label>
-                            <input type="date" id="plan_date_end" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="plan_parent">Plan Dependencies</label>
-                            <select id="plan_parent" class="custom-select">
-                                <option value="" disabled selected>Select Dependencies</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="plan_priority">Plan Priority</label>
-                            <select id="plan_priority" class="custom-select">
-                                <option value="high">High</option>
-                                <option value="medium">Medium</option>
-                                <option value="low">Low</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <button class="btn btn-primary mb-2" id="plan_btn">Add Plan</button>
+                    <button type="submit" class="btn btn-primary mb-2" id="plan_btn">Add Plan</button>
+                </form>
                 <table class="table table-striped" id="plan_table">
                     <thead>
                         <th>Plan Name</th>
@@ -125,9 +127,9 @@
                                 <div class="form-group">
                                     <label for="task_user">Assign To</label>
                                     <select id="task_user" class="custom-select">
-                                        <option value="high">High</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="low">Low</option>
+                                        @foreach($data["users"] as $user)
+                                            <option value="{{ $user['id'] }}">{{ $user["f_name"] . " " . $user["l_name"] }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -216,7 +218,8 @@
         data.addColumn('number', 'Percent Complete');
         data.addColumn('string', 'Dependencies');
         chart = new google.visualization.Gantt(document.getElementById('chart_div'));
-        $("#plan_btn").click(function(){
+        $("#plan-details").on("submit", function(e){
+            e.preventDefault();
             if($("plan_input input[required]").filter(function () {
                     return $.trim($(this).val()).length == 0
                 }).length == 0){
@@ -249,6 +252,7 @@
                     $("#plan_name_input").val(),
                     $("#plan_date_start").val(),
                     $("#plan_date_end").val(),
+                    $("#plan_priority").val(),
                     parent
                 ];
                 chart.draw(data, {height: 300, title: project_data.project_name});
