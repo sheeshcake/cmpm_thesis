@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Auth;
 use View;
@@ -15,7 +15,7 @@ class RegisterController extends Controller
         if(Auth::check()){
             return redirect(Auth::user()->role . '/dashboard');
         }else{
-            if(User::all()->isEmpty()){
+            if(Admin::all()->isEmpty()){
                 return view('layout.auth.register')->with("page", "CMPM | Register");
             }else{
                 return view('layout.auth.login')->with("page", "CMPM | Login");

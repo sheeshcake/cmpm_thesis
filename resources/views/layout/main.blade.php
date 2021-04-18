@@ -6,7 +6,6 @@
                 <h3>Welcome To</h3>
                 <h1>Construction Management Performance Monitoring System</h1>
                 <h6>By: Wendale Dy, Shandy Dominguez</h6>
-                <a href="{{route('login')}}" class="btn btn-primary">Lets Start!</a>
             </div>
             <div class="card">
                 <div class="card-header">
@@ -29,6 +28,7 @@
                             <div class="tab-content" id="nav-tabContent">
                                 <div class="tab-pane fade show active" id="list-admin" role="tabpanel" aria-labelledby="list-admin-list">
                                     <p>Ang admin maka add ug employee like HR, Civil Engineer, Project Manager ug maka kita sa mga sales and shit</p>
+                                    <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
                                 </div>
                                 <div class="tab-pane fade" id="list-hr" role="tabpanel" aria-labelledby="list-hr-list">
                                     <p>Hr mao ni ang mo add ug mga employee ug mag manage sa payroll</p>
@@ -41,6 +41,7 @@
                                 </div>
                                 <div class="tab-pane fade" id="list-pm" role="tabpanel" aria-labelledby="list-pm-list">
                                     <p>Project Manager mao ni ang mo plano sa project ug mag manage sa time frame</p>
+                                    <a href="{{ route('loginprojectmanager') }}" class="btn btn-primary">Login</a>
                                 </div>
                                 <div class="tab-pane fade" id="list-expediter" role="tabpanel" aria-labelledby="list-expediter-list">
                                     <p>Expediter mao ni ang mo manage sa mga supplies</p>

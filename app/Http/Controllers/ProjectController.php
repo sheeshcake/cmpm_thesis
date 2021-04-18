@@ -23,6 +23,12 @@ class ProjectController extends Controller
     }
 
     public function AddProject(Request $request){
+        $project = new Projects();
+        $project->project_name = $request->data["project_name"];
+        $project->project_address = $request->data["project_address"];
+        $project->client_id = $request->data["client_id"];
+        $project->save();
         return $request->data;
+
     }
 }

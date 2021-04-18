@@ -3,22 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Admin;
+use App\Models\ProjectManager;
 use Redirect;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class LoginController extends Controller
+class LoginProjectManagerController extends Controller
 {
     public function ShowLogin(){
         if(Auth::check()){
             return redirect(Auth::user()->role . '/dashboard');
         }else{
-            if(Admin::all()->isEmpty()){
+            if(ProjectManager::all()->isEmpty()){
                 return redirect("register")->with("page", "CMPM | Register");
             }else{
-                return view('layout.auth.login')->with("page", "CMPM | Login");  
+                return view('layout.auth.login-projectmanager')->with("page", "CMPM | Login");  
             }
         }
     }

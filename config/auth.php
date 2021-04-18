@@ -46,6 +46,14 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins'
+        ],
+        'projectmanager' => [
+            'driver' => 'session',
+            'provider' => 'projectmanagers'
+        ]
     ],
 
     /*
@@ -70,7 +78,14 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
+        'projectmanager' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\ProjectManagers::class,
+        ]
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',

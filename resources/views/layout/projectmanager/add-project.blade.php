@@ -28,6 +28,12 @@
                             <label for="project_address">Project Address</label>
                             <input type="text" class="form-control" id="project_address_input" placeholder="Project Address">
                         </div>
+                        <div class="form-group">
+                            <label for="client_id">Select Client</label>
+                            <select name="client_id" id="client_id">
+                                
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <hr>
@@ -242,7 +248,8 @@
                 project_data.plans[$counter] = [
                     $("#plan_name_input").val(),
                     $("#plan_date_start").val(),
-                    $("#plan_date_end").val()
+                    $("#plan_date_end").val(),
+                    parent
                 ];
                 chart.draw(data, {height: 300, title: project_data.project_name});
                 $counter++;
