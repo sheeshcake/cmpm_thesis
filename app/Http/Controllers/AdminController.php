@@ -7,7 +7,7 @@ use Illuminate\Models\User;
 use Auth;
 
 class AdminController extends Controller
-{
+{   
     public function ShowDashboard(){
         return view("layout." . Auth::user()->role . ".dashboard")
                 ->with("data", [
