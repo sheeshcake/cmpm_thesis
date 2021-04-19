@@ -28,6 +28,7 @@
                             <td>{{ $employee->user_id }}</td>
                             <td>{{ $employee->f_name . " " . $employee->l_name }}</td>
                             <td>
+                                
                             </td>
                             <td>
                                 <a href="{{ route('employee', ['id' => $employee->user_id]) }}" class="btn btn-primary">Edit</a>

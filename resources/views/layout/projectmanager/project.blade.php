@@ -20,7 +20,7 @@
             <div class="card-body">
                 @if(Session::has('success'))
                 <div class="alert alert-success">
-                {{ Session::get('success')}}
+                    {{ Session::get('success')}}
                 </div>
                 @endif
                 <div class="my-3 min-vw-25" id="chart_div"></div>
@@ -150,4 +150,17 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    function init_data(){
+        
+    }
+    
+    $(document).ready(function(){
+
+    });
+</script>
 @endsection
