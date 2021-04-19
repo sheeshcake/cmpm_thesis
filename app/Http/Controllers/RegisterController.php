@@ -13,7 +13,7 @@ class RegisterController extends Controller
 {
     public function ShowRegister(){
         if(Auth::check()){
-            return redirect(Auth::user()->role . '/dashboard');
+            return redirect('/dashboard');
         }else{
             if(Admin::all()->isEmpty()){
                 return view('layout.auth.register')->with("page", "CMPM | Register");
@@ -40,7 +40,7 @@ class RegisterController extends Controller
 		else{
             $data = $request->input();
 			try{
-				$user = new User;
+				$user = new Admin;
                 $user->f_name = $data['f_name'];
                 $user->l_name = $data['l_name'];
 				$user->username = $data['username'];

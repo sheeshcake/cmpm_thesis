@@ -42,7 +42,7 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Tools:</h6>
             <a class="collapse-item" href="{{ route('newproject') }}">Add Project</a>
-            <a class="collapse-item" href="{{ route('allprojects') }}">Show All Projects</a>
+            <a class="collapse-item" href="{{ route('projects') }}">Show All Projects</a>
         </div>
     </div>
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#clientcollapse"
@@ -54,7 +54,7 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Tools:</h6>
             <a class="collapse-item" href="{{ route('newclient') }}">Add Client</a>
-            <a class="collapse-item" href="{{ route('allclients') }}">Show All Clients</a>
+            <a class="collapse-item" href="{{ route('clients') }}">Show All Clients</a>
         </div>
     </div>
 </li>

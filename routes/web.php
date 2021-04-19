@@ -34,6 +34,7 @@ use Illuminate\Http\Controllers\ProjectsController;
         Route::get("/dashboard", "ProjectManagerController@ShowDashboard")->name("dashboard");
         Route::prefix("/projects")->group(function(){
             Route::get("/", "ProjectController@ShowAllProjects")->name("projects");
+            Route::get("/project/{id}", "ProjectController@ShowProject")->name("showproject");
             Route::get("/newproject", "ProjectController@ShowAddProject")->name("newproject");
             Route::post("/addproject", "ProjectController@AddProject")->name("addproject");
             Route::post("/removeproject", "ProjectController@RemoveProject")->name("removeproject");
@@ -42,7 +43,10 @@ use Illuminate\Http\Controllers\ProjectsController;
     });
 
     Route::group(['middleware' => ['auth'], 'guard' => ['projectmanager']], function(){
-        
+        Route::prefix('/clients')->group(function(){
+            Route::get("/newclient", function(){})->name("newclient");
+            Route::get("/", function(){})->name("clients");
+        });
     });
 
 

@@ -31,10 +31,31 @@ class ProjectController extends Controller
                     ]);
     }
 
+
+    public function GetProjectData($id){
+        $project_data = [];
+        $project_details = Projects::where("id", "=", $id)->get()->toArray();
+        $project_data = $project_details[0];
+        $project_plans = Plans::where("project_id", "=", $id)->get()->toArray();
+        $project_data["plans"] = $project_plans[0];
+        foreach($project_plans as $key => $plans){
+            $project_tasks = Tasks::where("plan_id", "=", $plans["id"])->get()->toArray();
+            $project_data["plans"]["tasks"][$key] = $project_tasks[0];
+        }
+        echo json_encode($project_data);
+    }
+
     public function ShowProject(Request $request){
         $project_data = [];
         $project_details = Projects::where("id", "=", $request->id)->get()->toArray();
-        dd($project_details);
+        $project_data = $project_details[0];
+        $project_plans = Plans::where("project_id", "=", $request->id)->get()->toArray();
+        $project_data["plans"] = $project_plans[0];
+        foreach($project_plans as $key => $plans){
+            $project_tasks = Tasks::where("plan_id", "=", $plans["id"])->get()->toArray();
+            $project_data["plans"]["tasks"][$key] = $project_tasks[0];
+        }
+        dd($project_data);
     }
 
     public function UpdateProject(Request $request){
@@ -65,28 +86,31 @@ class ProjectController extends Controller
         $project->client_id = $request->data["client_id"];
         $project->save();
         $project_id = $project->id;
-        foreach($request->data['plans'] as $plans){
+        foreach($request->data['plans'] as $plans_data){
             $plans = new Plans();
             $plans->project_id = $project_id;
-            $plans->plan_name = $plans[0];
-            $plans->plan_date_start = $plans[1];
-            $plans->plan_date_end = $plans[2];
-            $plans->plan_priority = $plans[3];
-            $plans->plan_dependency = $plans[4];
+            $plans->plan_name = $plans_data["plan_name"];
+            $plans->plan_date_start = $plans_data["plan_start"];
+            $plans->plan_date_end = $plans_data["plan_end"];
+            $plans->plan_priority = $plans_data["plan_priority"];
+            $plans->plan_dependency = $plans_data["plan_dependency"];
             $plans->save();
             $plan_id = $plans->id;
-            foreach($request->data["tasks"] as $tasks){
-                $tasks = new Tasks();
-                $tasks->plan_id = $plan_id;
-                $tasks->task_name = $tasks[0];
-                $tasks->task_priority = $tasks[1];
-                $tasks->task_date_start = $tasks[2];
-                $tasks->task_date_end = $tasks[3];
-                $tasks->user_id = $tasks[4];
-                $tasks->save();
+            if(isset($plans_data["tasks"])){
+                foreach($plans_data["tasks"] as $tasks_data){
+                    $task = new Tasks();
+                    $task->plan_id = $plan_id;
+                    $task->task_name = $tasks_data["task_name"];
+                    $task->task_priority = $tasks_data["task_priority"];
+                    $task->task_date_start = $tasks_data["task_start"];
+                    $task->task_date_end = $tasks_data["task_end"];
+                    $task->user_id = $tasks_data["assigned_to"];
+                    $task->task_status = "pending";
+                    $task->save();
+                }
             }
         }
-        return redirect('projectmanager/project' + $project_id)->with("success", "Project Saved!");
+        return $project->id;
     }
 
 }

@@ -13,7 +13,7 @@ class LoginProjectManagerController extends Controller
 {
     public function ShowLogin(){
         if(Auth::check()){
-            return redirect(Auth::user()->role . '/dashboard');
+            return redirect('/dashboard');
         }else{
             if(ProjectManager::all()->isEmpty()){
                 return redirect("register")->with("page", "CMPM | Register");
@@ -38,7 +38,7 @@ class LoginProjectManagerController extends Controller
             $credentials = $request->only('username', 'password');
             if (Auth::attempt($credentials)) {
                 $request->session()->regenerate();
-                return redirect(Auth::user()->role . '/dashboard');
+                return redirect('/dashboard');
             }else{
                 return Redirect::back()->withInput($request->input())->with([
                     'msg' => 'Username or Password is incorrect.',

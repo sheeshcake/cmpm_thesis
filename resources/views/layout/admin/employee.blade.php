@@ -149,6 +149,7 @@
                             <option value="hr" @if($data['user_data'][0]->user_position == "hr") {{ "selected" }} @endif>HR(Human Resource)</option>
                             <option value="civilengineer" @if($data['user_data'][0]->user_position == "civilengineer") {{ "selected" }} @endif>Civil Engineer</option>
                             <option value="projectmanager" @if($data['user_data'][0]->user_position == "projectmanager") {{ "selected" }} @endif>Project Manager</option>
+                            <option value="foreman" @if($data['user_data'][0]->user_position == "foreman") {{ "selected" }} @endif>Foreman</option>
                             <option value="expediter" @if($data['user_data'][0]->user_position == "expediter") {{ "selected" }} @endif>Expediter</option>
                             <option value="projectmanager" @if($data['user_data'][0]->user_position == "projectmanager") {{ "selected" }} @endif>Project Manager</option>
                         </select>

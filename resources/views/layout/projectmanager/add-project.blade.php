@@ -106,34 +106,52 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="task_name_input">Task Name</label>
-                                    <input type="text" id="task_name_input" class="form-control" placeholder="Task Name">
+                        <form action="#" id="task-form">
+                            <input type="hidden" id="task_plan_id" value="">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="task_name_input">Task Name</label>
+                                        <input type="text" id="task_name_input" class="form-control" placeholder="Task Name" required>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="task_priority">Task Priority</label>
+                                        <select id="task_priority" class="custom-select" required>
+                                            <option value="high">High</option>
+                                            <option value="medium">Medium</option>
+                                            <option value="low">Low</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="task_user">Assign To</label>
+                                        <select id="task_user" class="custom-select" required>
+                                            @foreach($data["users"] as $user)
+                                                <option value="{{ $user['id'] }}">{{ $user["f_name"] . " " . $user["l_name"] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="task_priority">Task Priority</label>
-                                    <select id="task_priority" class="custom-select">
-                                        <option value="high">High</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="low">Low</option>
-                                    </select>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="task_start">Task Start</label>
+                                        <input type="date" id="task_start" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="task_end">Task End</label>
+                                        <input type="date" id="task_end" class="form-control">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="task_user">Assign To</label>
-                                    <select id="task_user" class="custom-select">
-                                        @foreach($data["users"] as $user)
-                                            <option value="{{ $user['id'] }}">{{ $user["f_name"] . " " . $user["l_name"] }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                            <button type="submit" class="btn btn-primary" id="add-task">Add</button>
+                        </form>
                         <div id="plan_tasks"></div>
                     </div>
                     <div class="modal-footer">
@@ -153,14 +171,37 @@
     var project_data = {
         project_name: "New Project",
         project_address: "",
+        client_id: 1,
         plans:[],
-        tasks:[]
     };
-    var data, chart;
+    var data, chart, task_counter = 0;
     var table = $('#plan_table').DataTable();
     google.charts.load('current', {'packages':['gantt']});
     google.charts.setOnLoadCallback(drawChart); 
-
+    $("#task-form").on("submit", function(e){
+        e.preventDefault();
+        var task_name = $("#task_name_input").val();
+        var task_priority = $("#task_priority").val();
+        var assigned_to = $("#task_user").val();
+        var task_start = $("#task_start").val();
+        var task_end = $("#task_end").val();
+        project_data["plans"][$("#task_plan_id").val()].tasks.push({
+            "task_name" : task_name,
+            "task_priority" : task_priority,
+            "task_start" : task_start,
+            "task_end" : task_end, 
+            "assigned_to" : assigned_to
+        });
+        task_counter++;
+        $("#plan_tasks").append(
+            '<div class="card mt-3">' +
+                '<div class="card-body">' +
+                    '<p> ' + task_name + ' </p>' +
+                    '<p> ' + task_start  + ' to ' + task_end + '</p>' +
+                '</div>' +
+            '</div>' 
+        );
+    });
     $("#project_name_input").on("input", function(){
         $("#project_name").text($(this).val());
         project_data.project_name = $(this).val();
@@ -186,6 +227,7 @@
             },
             success: function(d){
                 console.log(d);
+                window.location.href = "project/" + d;
             }
         })
     });
@@ -248,13 +290,14 @@
                     $("#plan_priority").val(),
                     "<button class='btn btn-danger remove_plan' onclick='removePlan(" + $counter + ")'>Delete</button>"
                 ]).draw().node();
-                project_data.plans[$counter] = [
-                    $("#plan_name_input").val(),
-                    $("#plan_date_start").val(),
-                    $("#plan_date_end").val(),
-                    $("#plan_priority").val(),
-                    parent
-                ];
+                project_data.plans.push({
+                    "plan_name" : $("#plan_name_input").val(),
+                    "plan_start" : $("#plan_date_start").val(),
+                    "plan_end" : $("#plan_date_end").val(),
+                    "plan_priority" : $("#plan_priority").val(),
+                    "plan_dependency" : parent,
+                    "tasks" : []
+                });
                 chart.draw(data, {height: 300, title: project_data.project_name});
                 $counter++;
             }
@@ -263,6 +306,9 @@
             var selections = chart.getSelection();
             var selection = selections[0];
             $("#plan_name").text(data.getValue(selection.row, 1));
+            var plan_details = data.getValue(selection.row, 0).split("-");
+            $("#task_plan_id").val(plan_details[1]);
+            $("#plan_tasks").html("");
             $('#plan_modal').modal('show');
         });   
     }

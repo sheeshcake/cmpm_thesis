@@ -145,6 +145,7 @@
                             <option value="hr">HR(Human Resource)</option>
                             <option value="civilengineer">Civil Engineer</option>
                             <option value="projectmanager">Project Manager</option>
+                            <option value="foreman">Foreman</option>
                             <option value="expediter">Expediter</option>
                             <option value="projectmanager">Project Manager</option>
                         </select>

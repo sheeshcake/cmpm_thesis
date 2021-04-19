@@ -55,7 +55,7 @@ class EmployeeController extends Controller
         $user->save();
         $request->merge(["user_id" => $user->id]);
         $id = UserDetails::create($request->except(["f_name", "l_name", "email"]))->id;
-        return redirect(Auth::user()->role . '/employees/allemployees')
+        return redirect('employee/' . $user->id)
                 ->with("msg", "User Saved!");
     }
 
@@ -68,14 +68,14 @@ class EmployeeController extends Controller
             ]);
         UserDetails::where('user_id', '=', $request->id)
                 ->update($request->except(["f_name", "l_name", "email", "_token", "submit"]));
-        return redirect(Auth::user()->role  . '/employee/' . $request->id)
+        return redirect('employee/' . $request->id)
                 ->with("msg", "User Updated!");
     }
 
     public function RemoveEmployee(Request $request){
         User::where("id", $request->id)->delete();
         UserDetails::where("user_id", $request->id)->delete();
-        return redirect(Auth::user()->role . '/employees/allemployees')
+        return redirect('/employees')
                     ->with("msg", "User Removed!");
     }
 }
