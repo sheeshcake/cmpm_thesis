@@ -2,15 +2,15 @@
 @extends('home')
 
 @section('sidebar')
-    @include('layout.admin.includes.sidebar')
+    @include('layout.civilengineer.includes.sidebar')
 @endsection
 
 @section('topbar')
-    @include('layout.admin.includes.topbar')
+    @include('layout.civilengineer.includes.topbar')
 @endsection
 
 @section('content')
     <div class="card">
-        <h1>Hello This is Admin</h1>
+        <h1>Hello This is CivilEngineer</h1>
     </div>
 @endsection

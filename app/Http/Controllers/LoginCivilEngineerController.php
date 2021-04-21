@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ProjectManager;
+use App\Models\CivilEngineer;
 use App\Models\User;
 use Redirect;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class LoginProjectManagerController extends Controller
+class LoginCivilEngineerController extends Controller
 {
     public function ShowLogin(){
         if(Auth::check()){
@@ -19,7 +19,7 @@ class LoginProjectManagerController extends Controller
             if(User::all()->isEmpty()){
                 return redirect("register")->with("page", "CMPM | Register");
             }else{
-                return view('layout.auth.login-projectmanager')->with("page", "CMPM | Login");  
+                return view('layout.auth.login-civilengineer')->with("page", "CMPM | Login");  
             }
         }
     }

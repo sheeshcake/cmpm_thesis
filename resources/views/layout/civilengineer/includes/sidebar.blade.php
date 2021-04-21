@@ -30,27 +30,32 @@
 </div>
 
 
-<!-- Nav Item - Charts -->
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('projects') }}">
-        <i class="fas fa-fw fa-drafting-compass"></i>
-        <span>Projects</span></a>
-</li>
 
 <!-- Nav Item - Tables -->
 <li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-        aria-expanded="true" aria-controls="collapseTwo">
-        <i class="fas fa-fw fa-user"></i>
-        <span>Employees</span>
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#projectcollapse"
+        aria-expanded="true" aria-controls="projectcollapse">
+        <i class="fas fa-fw fa-box"></i>
+        <span>Projects</span>
     </a>
-    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+    <div id="projectcollapse" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Tools:</h6>
-            <a class="collapse-item" href="{{ route('addemployee') }}">Add Employees</a>
-            <a class="collapse-item" href="{{ route('allemployees') }}">Show All Employees</a>
+            <a class="collapse-item" href="{{ route('projects') }}">Show All Projects</a>
         </div>
     </div>
+    <!-- <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#clientcollapse"
+        aria-expanded="true" aria-controls="clientcollapse">
+        <i class="fas fa-fw fa-user"></i>
+        <span>Clients</span>
+    </a> -->
+    <!-- <div id="clientcollapse" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Tools:</h6>
+            <a class="collapse-item" href="{{ route('newclient') }}">Add Client</a>
+            <a class="collapse-item" href="{{ route('clients') }}">Show All Clients</a>
+        </div>
+    </div> -->
 </li>
 
 <!-- Divider -->

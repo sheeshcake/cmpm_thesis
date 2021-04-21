@@ -14,7 +14,14 @@ use Auth;
 class ProjectController extends Controller
 {
     public function ShowAllProjects(){
-        
+        $projects = Projects::join("plans", "plans.project_id", "=", "projects.id")
+                    ->groupBy("projects.id")
+                    ->get();
+        return view("layout." . Auth::user()->role . ".projects")->with("data", [
+            "projects" => $projects,
+            "role" => Auth::user()->role,
+            "page" => "All Project"
+        ]);
     }
 
     public function ShowAddProject(){
@@ -32,30 +39,31 @@ class ProjectController extends Controller
     }
 
 
-    public function GetProjectData($id){
+    public function GetProjectData(Request $request){
         $project_data = [];
-        $project_details = Projects::where("id", "=", $id)->get()->toArray();
+        $project_details = Projects::where("id", "=", $request->project_id)->get()->toArray();
         $project_data = $project_details[0];
-        $project_plans = Plans::where("project_id", "=", $id)->get()->toArray();
-        $project_data["plans"] = $project_plans[0];
+        $project_plans = Plans::where("project_id", "=", $request->project_id)->get()->toArray();
+        $project_data["plans"] = $project_plans;
         foreach($project_plans as $key => $plans){
             $project_tasks = Tasks::where("plan_id", "=", $plans["id"])->get()->toArray();
-            $project_data["plans"]["tasks"][$key] = $project_tasks[0];
+            // dd($project_tasks[0]);
+            $project_data["plans"][$key]["tasks"] = $project_tasks;
         }
         echo json_encode($project_data);
     }
 
     public function ShowProject(Request $request){
-        $project_data = [];
-        $project_details = Projects::where("id", "=", $request->id)->get()->toArray();
-        $project_data = $project_details[0];
-        $project_plans = Plans::where("project_id", "=", $request->id)->get()->toArray();
-        $project_data["plans"] = $project_plans[0];
-        foreach($project_plans as $key => $plans){
-            $project_tasks = Tasks::where("plan_id", "=", $plans["id"])->get()->toArray();
-            $project_data["plans"]["tasks"][$key] = $project_tasks[0];
-        }
-        dd($project_data);
+        $users = User::where("role" , "=", "foreman")
+                    ->orWhere("role", "=", "civilengineer")
+                    ->get();
+        $project = Projects::where("id", "=", $request->id)->get()->toArray();
+        return view("layout." . Auth::user()->role . ".project")->with("data", [
+            "project" => $project,
+            "role" => Auth::user()->role,
+            "users" => $users,
+            "page" => $project[0]["project_name"]
+        ]);
     }
 
     public function UpdateProject(Request $request){

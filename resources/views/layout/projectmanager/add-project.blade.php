@@ -93,7 +93,7 @@
 
                     </tbody>
                 </table>
-                <button class="btn btn-success mt-2" id="submit_plan">Submit Plan</button>
+                <button class="btn btn-success mt-2" id="submit_plan">Submit Project</button>
             </div>
         </div>
         <div class="modal fade" id="plan_modal" tabindex="-1" role="dialog" aria-labelledby="plan_name" aria-hidden="true">
@@ -152,6 +152,7 @@
                             </div>
                             <button type="submit" class="btn btn-primary" id="add-task">Add</button>
                         </form>
+                        <hr>
                         <div id="plan_tasks"></div>
                     </div>
                     <div class="modal-footer">
@@ -178,30 +179,6 @@
     var table = $('#plan_table').DataTable();
     google.charts.load('current', {'packages':['gantt']});
     google.charts.setOnLoadCallback(drawChart); 
-    $("#task-form").on("submit", function(e){
-        e.preventDefault();
-        var task_name = $("#task_name_input").val();
-        var task_priority = $("#task_priority").val();
-        var assigned_to = $("#task_user").val();
-        var task_start = $("#task_start").val();
-        var task_end = $("#task_end").val();
-        project_data["plans"][$("#task_plan_id").val()].tasks.push({
-            "task_name" : task_name,
-            "task_priority" : task_priority,
-            "task_start" : task_start,
-            "task_end" : task_end, 
-            "assigned_to" : assigned_to
-        });
-        task_counter++;
-        $("#plan_tasks").append(
-            '<div class="card mt-3">' +
-                '<div class="card-body">' +
-                    '<p> ' + task_name + ' </p>' +
-                    '<p> ' + task_start  + ' to ' + task_end + '</p>' +
-                '</div>' +
-            '</div>' 
-        );
-    });
     $("#project_name_input").on("input", function(){
         $("#project_name").text($(this).val());
         project_data.project_name = $(this).val();
@@ -309,6 +286,16 @@
             var plan_details = data.getValue(selection.row, 0).split("-");
             $("#task_plan_id").val(plan_details[1]);
             $("#plan_tasks").html("");
+            project_data["plans"][plan_details[1]]["tasks"].forEach(function(element){
+                $("#plan_tasks").append(
+                    '<div class="card mt-3">' +
+                        '<div class="card-body">' +
+                            '<p> ' + element.task_name + ' </p>' +
+                            '<p> ' + element.task_start  + ' to ' + element.task_end + '</p>' +
+                        '</div>' +
+                    '</div>' 
+                );
+            });
             $('#plan_modal').modal('show');
         });   
     }

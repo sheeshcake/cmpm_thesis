@@ -2,11 +2,11 @@
 @extends('home')
 
 @section('sidebar')
-    @include('layout.projectmanager.includes.sidebar')
+    @include('layout.civilengineer.includes.sidebar')
 @endsection
 
 @section('topbar')
-    @include('layout.projectmanager.includes.topbar')
+    @include('layout.civilengineer.includes.topbar')
 @endsection
 
 @section('content')
@@ -27,64 +27,21 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="project_name_input">Project Name</label>
-                            <input type="text" class="form-control" id="project_name_input" placeholder="Project Name" value="{{ $data['project'][0]['project_name'] }}">
+                            <input type="text" class="form-control" id="project_name_input" placeholder="Project Name" value="{{ $data['project'][0]['project_name'] }}" readonly>
                         </div>
                         <div class="form-group">
                             <label for="project_address">Project Address</label>
-                            <input type="text" class="form-control" id="project_address_input" placeholder="Project Address" value="{{ $data['project'][0]['project_address'] }}">
+                            <input type="text" class="form-control" id="project_address_input" placeholder="Project Address" value="{{ $data['project'][0]['project_address'] }}" readonly>
                         </div>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="client_id">Select Client</label>
                             <select name="client_id" id="client_id">
                                 
                             </select>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <hr>
-                <form action="#" id="plan-details">
-                    <div class="row" id="plan_input">
-                        <div class="col">
-                            <div class="form-group">
-                                <label for="plan_name_input">Plan Name</label>
-                                <input type="text" id="plan_name_input" class="form-control" placeholder="Plan Name" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-group">
-                                <label for="plan_date_start">Plan Date Start</label>
-                                <input type="date" id="plan_date_start" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-group">
-                                <label for="plan_date_end">Plan Date End</label>
-                                <input type="date" id="plan_date_end" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-group">
-                                <label for="plan_parent">Plan Dependencies</label>
-                                <select id="plan_parent" class="custom-select">
-                                    <option value="" disabled selected>Select Dependencies</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-group">
-                                <label for="plan_priority">Plan Priority</label>
-                                <select id="plan_priority" class="custom-select">
-                                    <option value="high">High</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="low">Low</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary mb-2" id="plan_btn">Add Plan</button>
-                </form>
                 <table class="table table-striped" id="plan_table">
                     <thead>
                         <th>Plan Name</th>
@@ -92,12 +49,10 @@
                         <th>Date End</th>
                         <th>Dependency</th>
                         <th>Priority</th>
-                        <th>Actions</th>
                     </thead>
                     <tbody>
                     </tbody>
                 </table>
-                <button class="btn btn-success mt-2" id="submit_plan">Update Project</button>
             </div>
         </div>
         <div class="modal fade" id="plan_modal" tabindex="-1" role="dialog" aria-labelledby="plan_name" aria-hidden="true">
@@ -110,10 +65,40 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="task_name_input">Task Name</label>
+                                    <input type="text" id="task_name_input" class="form-control" placeholder="Task Name">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="task_priority">Task Priority</label>
+                                    <select id="task_priority" class="custom-select">
+                                        <option value="high">High</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="low">Low</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="task_user">Assign To</label>
+                                    <select id="task_user" class="custom-select">
+                                        @foreach($data["users"] as $user)
+                                            <option value="{{ $user['id'] }}">{{ $user["f_name"] . " " . $user["l_name"] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
                         <div id="plan_tasks"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
                     </div>
                 </div>
             </div>
@@ -126,6 +111,36 @@
 <script type="text/javascript">
     var data, chart, db_data, task_counter = 0, $counter = 0;
     var table = $('#plan_table').DataTable();
+
+    $("#task-form").on("submit", function(e){
+        e.preventDefault();
+        var task_name = $("#task_name_input").val();
+        var task_priority = $("#task_priority").val();
+        var assigned_to = $("#task_user").val();
+        var task_start = $("#task_start").val();
+        var task_end = $("#task_end").val();
+        db_data["plans"][$("#task_plan_id").val()].tasks.push({
+            "task_name" : task_name,
+            "task_priority" : task_priority,
+            "task_start" : task_start,
+            "task_end" : task_end, 
+            "assigned_to" : assigned_to
+        });
+        task_counter++;
+        $("#plan_tasks").append(
+            '<div class="card p-3 mt-3">' +
+                '<div class="row">' +
+                    '<div class="col-lg-10 col-md-6">' +
+                        '<p> ' + etask_name + ' </p>' +
+                        '<p> ' + etask_date_start  + ' to ' + etask_date_end + '</p>' +
+                    '</div>' +
+                    '<div class="col-lg-2 col-md-6">' +
+                        '<button class="btn btn-danger">Delete Task</button>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' 
+        );
+    });
 
 
     function init_data(){
@@ -174,8 +189,7 @@
                     element["plan_date_start"],
                     element["plan_date_end"],
                     element["plan_dependency"],
-                    element["plan_priority"],
-                    "<button class='btn btn-danger remove_plan' onclick='removePlan(" + index + ")'>Delete</button>"
+                    element["plan_priority"]
                 ]).draw();
                 $("#plan_parent").append(new Option(element["plan_name"], index));
                 itemsProcessed++;
@@ -212,8 +226,7 @@
                     $("#plan_date_start").val(),
                     $("#plan_date_end").val(),
                     parent_name,
-                    $("#plan_priority").val(),
-                    "<button class='btn btn-danger remove_plan' onclick='removePlan(" + $counter + ")'>Delete</button>"
+                    $("#plan_priority").val()
                 ]).draw().node();
                 db_data.plans.push({
                     "plan_name" : $("#plan_name_input").val(),
@@ -235,10 +248,15 @@
             $("#plan_tasks").html("");
             db_data["plans"][plan_details[1]]["tasks"].forEach(function(element){
                 $("#plan_tasks").append(
-                    '<div class="card mt-3">' +
-                        '<div class="card-body">' +
-                            '<p> ' + element.task_name + ' </p>' +
-                            '<p> ' + element.task_date_start  + ' to ' + element.task_date_end + '</p>' +
+                    '<div class="card p-3 mt-3">' +
+                        '<div class="row">' +
+                            '<div class="col-lg-10 col-md-6">' +
+                                '<p> ' + element.task_name + ' </p>' +
+                                '<p> ' + element.task_date_start  + ' to ' + element.task_date_end + '</p>' +
+                            '</div>' +
+                            '<div class="col-lg-2 col-md-6">' +
+                                '<button class="btn btn-danger">Delete Task</button>' +
+                            '</div>' +
                         '</div>' +
                     '</div>' 
                 );

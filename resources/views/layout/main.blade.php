@@ -39,6 +39,7 @@
                                 </div>
                                 <div class="tab-pane fade" id="list-civil" role="tabpanel" aria-labelledby="list-civil-list">
                                     <p>Civil Engineer kay mao na ang mo monitor sa project</p>
+                                    <a href="{{ route('logincivilengineer') }}" class="btn btn-primary">Login</a>
                                 </div>
                                 <div class="tab-pane fade" id="list-pm" role="tabpanel" aria-labelledby="list-pm-list">
                                     <p>Project Manager mao ni ang mo plano sa project ug mag manage sa time frame</p>

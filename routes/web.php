@@ -30,10 +30,11 @@ use Illuminate\Http\Controllers\ProjectsController;
             Route::post("/updateemployee", "EmployeeController@UpdateEmployee")->name("updateemployee");
         });
     });
-    Route::group(['middleware' => ['auth'], 'guard'=>['projectmanager', 'admin']], function(){
-        Route::get("/dashboard", "ProjectManagerController@ShowDashboard")->name("dashboard");
+    Route::group(['middleware' => ['auth'], 'guard'=>['projectmanager', 'admin', 'civilengineer']], function(){
+        Route::get("/dashboard", "DashboardController@ShowDashboard")->name("dashboard");
         Route::prefix("/projects")->group(function(){
             Route::get("/", "ProjectController@ShowAllProjects")->name("projects");
+            Route::post("/getdata", "ProjectController@GetProjectData")->name("getdata");
             Route::get("/project/{id}", "ProjectController@ShowProject")->name("showproject");
             Route::get("/newproject", "ProjectController@ShowAddProject")->name("newproject");
             Route::post("/addproject", "ProjectController@AddProject")->name("addproject");
@@ -50,23 +51,27 @@ use Illuminate\Http\Controllers\ProjectsController;
     });
 
 
-Route::prefix('/login')->group(function(){
-    Route::get("/", "LoginController@ShowLogin");
-    Route::post("/", "LoginController@DoLogin")->name('login');
-});
-Route::prefix('/loginprojectmanager')->group(function(){
-    Route::get("/", "LoginProjectManagerController@ShowLogin");
-    Route::post("/", "LoginProjectManagerController@DoLogin")->name('loginprojectmanager');
-});
+    Route::prefix('/login')->group(function(){
+        Route::get("/", "LoginController@ShowLogin");
+        Route::post("/", "LoginController@DoLogin")->name('login');
+    });
+    Route::prefix('/loginprojectmanager')->group(function(){
+        Route::get("/", "LoginProjectManagerController@ShowLogin");
+        Route::post("/", "LoginProjectManagerController@DoLogin")->name('loginprojectmanager');
+    });
+    Route::prefix('/logincivilengineer')->group(function(){
+        Route::get("/", "LoginCivilEngineerController@ShowLogin");
+        Route::post("/", "LoginCivilEngineerController@DoLogin")->name('logincivilengineer');
+    });
 
-Route::prefix('/register')->group(function(){
-    Route::get('/', "RegisterController@ShowRegister");
-    Route::post('/', "RegisterController@DoRegister")->name("register");
-});
+    Route::prefix('/register')->group(function(){
+        Route::get('/', "RegisterController@ShowRegister");
+        Route::post('/', "RegisterController@DoRegister")->name("register");
+    });
 
 
-Route::post('/logout', "LogoutController@logout")->name('logout');
+    Route::post('/logout', "LogoutController@logout")->name('logout');
 
-Route::get('/', function () {
-    return view('layout.main')->with('page', "CMPM");
-});
+    Route::get('/', function () {
+        return view('layout.main')->with('page', "CMPM");
+    });

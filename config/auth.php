@@ -53,6 +53,10 @@ return [
         'projectmanager' => [
             'driver' => 'session',
             'provider' => 'projectmanagers'
+        ],
+        'civilengineer' => [
+            'driver' => 'session',
+            'provider' => 'civilengineers'
         ]
     ],
 
@@ -82,9 +86,13 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
         ],
-        'projectmanager' => [
+        'projectmanagers' => [
             'driver' => 'eloquent',
             'model' => App\Models\ProjectManagers::class,
+        ],
+        'civilengineers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\CivilEngineer::class,
         ]
         // 'users' => [
         //     'driver' => 'database',

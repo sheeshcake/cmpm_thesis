@@ -14,14 +14,14 @@
                         <div class="col-lg-6">
                             <div class="p-5">
                                 <div class="text-center">
-                                    <h1 class="h4 text-gray-900 mb-4">Login As Project Manager!</h1>
+                                    <h1 class="h4 text-gray-900 mb-4">Login As Civil Engineer!</h1>
                                 </div>
                                 @if(Session::has('msg'))
                                 <div class="alert alert-{{ Session::get('status') }}">
                                     {{ Session::get('msg') }}
                                 </div>
                                 @endif
-                                <form class="user" method="post" action="{{ route('loginprojectmanager') }}">
+                                <form class="user" method="post" action="{{ route('logincivilengineer') }}">
                                     @csrf
                                     <div class="form-group">
                                         <input type="text" class="form-control form-control-user" name="username" value="{{ old('username') }}" aria-describedby="emailHelp" placeholder="Enter Username">
