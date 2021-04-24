@@ -65,40 +65,58 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="task_name_input">Task Name</label>
-                                    <input type="text" id="task_name_input" class="form-control" placeholder="Task Name">
+                        <form action="#" id="task-form">
+                            <input type="hidden" value="" id="task_plan_id">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="task_name_input">Task Name</label>
+                                        <input type="text" id="task_name_input" class="form-control" placeholder="Task Name">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="task_priority">Task Priority</label>
+                                        <select id="task_priority" class="custom-select">
+                                            <option value="high">High</option>
+                                            <option value="medium">Medium</option>
+                                            <option value="low">Low</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="task_user">Assign To</label>
+                                        <select id="task_user" class="custom-select">
+                                            @foreach($data["users"] as $user)
+                                                <option value="{{ $user['id'] }}">{{ $user["f_name"] . " " . $user["l_name"] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="task_start">Task Start</label>
+                                            <input type="date" id="task_start" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="task_end">Task End</label>
+                                            <input type="date" id="task_end" class="form-control">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-success">Submit</button>
                                 </div>
                             </div>
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="task_priority">Task Priority</label>
-                                    <select id="task_priority" class="custom-select">
-                                        <option value="high">High</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="low">Low</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="task_user">Assign To</label>
-                                    <select id="task_user" class="custom-select">
-                                        @foreach($data["users"] as $user)
-                                            <option value="{{ $user['id'] }}">{{ $user["f_name"] . " " . $user["l_name"] }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                        </form>
                         <hr>
                         <div id="plan_tasks"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-primary" value="" id="submit_tasks">Save changes</button>
                     </div>
                 </div>
             </div>
@@ -131,8 +149,8 @@
             '<div class="card p-3 mt-3">' +
                 '<div class="row">' +
                     '<div class="col-lg-10 col-md-6">' +
-                        '<p> ' + etask_name + ' </p>' +
-                        '<p> ' + etask_date_start  + ' to ' + etask_date_end + '</p>' +
+                        '<p> ' + task_name + ' </p>' +
+                        '<p> ' + task_start  + ' to ' + task_end + '</p>' +
                     '</div>' +
                     '<div class="col-lg-2 col-md-6">' +
                         '<button class="btn btn-danger">Delete Task</button>' +
@@ -262,9 +280,34 @@
                 );
             });
             $("#task_plan_id").val(plan_details[1]);
+            $("#submit_tasks").val(plan_details[1]);
             $('#plan_modal').modal('show');
         });
     }
+    $("#submit_tasks").click(function(){
+        console.log($(this).val());
+        console.log($(this).attr("plan_id"));
+        console.log(db_data["plans"][$("#task_plan_id").val()].tasks);
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: "{{ route('updatetasks') }}",
+            method: "POST",
+            data:{
+                "plan_id" : $(this).val()   ,
+                "tasks": db_data["plans"][$(this).val()].tasks
+            },
+            success: function(e){
+                console.log(e);
+            }
+        })
+    });
+    // function send_tasks(btn){
+    //     console.log(btn.val());
+    // }
     $(document).ready(function(){
         // init_data();
         google.charts.load('current', {'packages':['gantt']});

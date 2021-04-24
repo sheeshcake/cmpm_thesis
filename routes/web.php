@@ -40,6 +40,7 @@ use Illuminate\Http\Controllers\ProjectsController;
             Route::post("/addproject", "ProjectController@AddProject")->name("addproject");
             Route::post("/removeproject", "ProjectController@RemoveProject")->name("removeproject");
             Route::post("/updateproject", "ProjectController@UpdateProject")->name("updateproject");
+            Route::post("/updatetask", "ProjectController@UpdateTasks")->name("updatetasks");
         });
     });
 

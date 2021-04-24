@@ -38,6 +38,22 @@ class ProjectController extends Controller
                     ]);
     }
 
+    public function UpdateTasks(Request $request){
+        Tasks::where("plan_id", "=", $request->plan_id)
+                ->delete();
+        foreach($request->tasks as $task){
+            $newtask = new Tasks();
+            $newtask->plan_id = $request->plan_id;
+            $newtask->task_name = $task["task_name"];
+            $newtask->task_priority = $task["task_priority"];
+            $newtask->user_id = $task["assigned_to"];
+            $newtask->task_date_start = $task["task_start"];
+            $newtask->task_date_end = $task["task_end"];
+            $newtask->task_status = "pending";
+            $newtask->save();
+        }
+    }
+
 
     public function GetProjectData(Request $request){
         $project_data = [];
@@ -105,16 +121,18 @@ class ProjectController extends Controller
             $plans->save();
             $plan_id = $plans->id;
             if(isset($plans_data["tasks"])){
-                foreach($plans_data["tasks"] as $tasks_data){
-                    $task = new Tasks();
-                    $task->plan_id = $plan_id;
-                    $task->task_name = $tasks_data["task_name"];
-                    $task->task_priority = $tasks_data["task_priority"];
-                    $task->task_date_start = $tasks_data["task_start"];
-                    $task->task_date_end = $tasks_data["task_end"];
-                    $task->user_id = $tasks_data["assigned_to"];
-                    $task->task_status = "pending";
-                    $task->save();
+                if(count($plans_data["tasks"]) > 0){
+                    foreach($plans_data["tasks"] as $tasks_data){
+                        $task = new Tasks();
+                        $task->plan_id = $plan_id;
+                        $task->task_name = $tasks_data["task_name"];
+                        $task->task_priority = $tasks_data["task_priority"];
+                        $task->task_date_start = $tasks_data["task_start"];
+                        $task->task_date_end = $tasks_data["task_end"];
+                        $task->user_id = $tasks_data["assigned_to"];
+                        $task->task_status = "pending";
+                        $task->save();
+                    }
                 }
             }
         }
