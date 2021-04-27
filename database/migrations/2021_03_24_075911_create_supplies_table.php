@@ -18,7 +18,9 @@ class CreateSuppliesTable extends Migration
             $table->foreignId("project_id");
             $table->string("supply_name");
             $table->string("supply_description");
-            $table->string("supply_price");
+            $table->string("supply_count");
+            $table->string("supply_price")->default("0");
+            $table->string("supply_status")->default("pending");
             $table->timestamps();
         });
     }

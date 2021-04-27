@@ -93,6 +93,48 @@
 
                     </tbody>
                 </table>
+                <hr>
+                <h3>Project Supplies</h3>
+                <form action="#" id="supply_form">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="supply_name">Supply Name</label>
+                                <input type="text" class="form-control" id="supply_name" required>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="supply_description">Supply Description</label>
+                                <input type="text" class="form-control" id="supply_description" required>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="supply_count">Supply Count</label>
+                                <input type="number" class="form-control" id="supply_count" required>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="supply_count">Action</label>
+                                <button class="btn btn-primary form-control" id="add_supply">Add Supply</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <table class="table table-striped" id="supply_table">
+                    <thead>
+                        <th>Supply Name</th>
+                        <th>Supply Description</th>
+                        <th>Supply Count</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+                <hr>
                 <button class="btn btn-success mt-2" id="submit_plan">Submit Project</button>
             </div>
         </div>
@@ -174,11 +216,53 @@
         project_address: "",
         client_id: 1,
         plans:[],
+        supplies:[],
     };
-    var data, chart, task_counter = 0;
-    var table = $('#plan_table').DataTable();
+    var data, chart, task_counter = 0, supply_counter = 0;
+    var table = $('#plan_table').DataTable({
+        "columnDefs": [ {
+            "targets": -1,
+            "data": null,
+            "defaultContent": "<button class='btn btn-danger'>Delete</button>"
+        } ]
+    });
+    var supply_table = $('#supply_table').DataTable({
+        "columnDefs": [ {
+            "targets": -1,
+            "data": null,
+            "defaultContent": "<button class='btn btn-danger'>Delete</button>"
+        } ]
+    });
     google.charts.load('current', {'packages':['gantt']});
     google.charts.setOnLoadCallback(drawChart); 
+
+    $('#supply_table tbody').on( 'click', 'button', function () {
+        console.log("before:" , project_data.supplies);
+        var rowId = supply_table.row( $(this).parents('tr') ).index();
+        project_data.supplies.splice(rowId, 1);
+        supply_table.row(rowId).remove().draw();
+        console.log("after:" , project_data.supplies);
+    } );
+
+
+    $("#supply_form").on("submit", function(e){
+        e.preventDefault();
+        project_data.supplies.push({
+            "supply_name" : $("#supply_name").val(),
+            "supply_description" : $("#supply_description").val(),
+            "supply_count" : $("#supply_count").val()
+        });
+        console.log("added:" , project_data.supplies);
+        supply_table.row.add([
+            $("#supply_name").val(),
+            $("#supply_description").val(),
+            $("#supply_count").val()
+        ]).draw().node();
+        $("#supply_name").val("");
+        $("#supply_description").val("");
+        $("#supply_count").val("");
+    });
+
     $("#project_name_input").on("input", function(){
         $("#project_name").text($(this).val());
         project_data.project_name = $(this).val();
@@ -215,16 +299,19 @@
         return days * 24 * 60 * 60 * 1000;
     }
 
-    function removePlan(index){
-        if(data.getNumberOfRows() == 1){
-            data.removeRow(index);
-            chart.draw();
+    $('#plan_table tbody').on( 'click', 'button', function () {
+        var rowId = table.row( $(this).parents('tr') ).index();
+        project_data.plans.splice(rowId, 1);
+        table.row(rowId).remove().draw();
+        data.removeRow(rowId);
+        console.log(project_data.plans.length);
+        if(project_data.plans.length > 0){
+            chart.draw(data);
         }else{
-            data.removeRow(index);
-            chart.draw(data, {height: 300, title: project_data.project_name});
+            $("#chart_div").hide();
         }
-
-    }
+        
+    });
 
     function drawChart() {
         data = new google.visualization.DataTable();
@@ -264,8 +351,7 @@
                     $("#plan_date_start").val(),
                     $("#plan_date_end").val(),
                     parent_name,
-                    $("#plan_priority").val(),
-                    "<button class='btn btn-danger remove_plan' onclick='removePlan(" + $counter + ")'>Delete</button>"
+                    $("#plan_priority").val()
                 ]).draw().node();
                 project_data.plans.push({
                     "plan_name" : $("#plan_name_input").val(),
@@ -278,6 +364,7 @@
                 chart.draw(data, {height: 300, title: project_data.project_name});
                 $counter++;
             }
+            $("#chart_div").show();
         });
         google.visualization.events.addListener(chart, 'select', function(){
             var selections = chart.getSelection();

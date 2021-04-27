@@ -8,6 +8,7 @@ use App\Models\Plans;
 use App\Models\Tasks;
 use App\Models\User;
 use App\Models\Clients;
+use App\Models\Supplies;
 
 use Auth;
 
@@ -135,6 +136,14 @@ class ProjectController extends Controller
                     }
                 }
             }
+        }
+        foreach($request->data['supplies'] as $supply_data){
+            $supplies = new Supplies();
+            $supplies->project_id = $project_id;
+            $supplies->supply_name = $supply_data["supply_name"];
+            $supplies->supply_description = $supply_data["supply_description"];
+            $supplies->supply_count = $supply_data["supply_count"];
+            $supplies->save();
         }
         return $project->id;
     }
