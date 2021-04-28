@@ -26,7 +26,7 @@
                             </div>
                         </div>
                         <div class="col-8">
-                            <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-content" id="nav-tabContent" >
                                 <div class="tab-pane fade show active" id="list-admin" role="tabpanel" aria-labelledby="list-admin-list">
                                     <p>Ang admin maka add ug employee like HR, Civil Engineer, Project Manager ug maka kita sa mga sales and shit</p>
                                     <a href="{{ route('login') }}" class="btn btn-primary">Login</a>

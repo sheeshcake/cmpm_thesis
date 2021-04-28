@@ -3731,14 +3731,11 @@ input[type="submit"].btn-block {
 }
 
 .mainbg{
-    margin: 0 auto;
-    background-image: url('../img/mainbg.jpg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    height: 100vh;
+    background-color: #1c606a;
 }
-
+#particles-js{
+    position: fixed;
+}
 
 
 .nav {

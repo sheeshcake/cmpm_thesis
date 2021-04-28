@@ -22,7 +22,9 @@
     </head>
     
     <body class="antialiased">
+    
         <div class="mainbg">
+        <canvas id="particles-js"></canvas>
             <div class="container">
                 @yield('content')
             </div>
@@ -30,10 +32,12 @@
 
         <script src="{{ url('/') }}/vendor/jquery/jquery.min.js"></script>
         <script src="{{ url('/') }}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
         <!-- Core plugin JavaScript-->
         <script src="{{ url('/') }}/vendor/jquery-easing/jquery.easing.min.js"></script>
-
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer data-deferred="1"></script>
+        <script src="{{ url('/') }}/js/particles.js"></script>
         <!-- Custom scripts for all pages-->
         <script src="{{ url('/') }}/js/sb-admin-2.min.js"></script>
     </body>
