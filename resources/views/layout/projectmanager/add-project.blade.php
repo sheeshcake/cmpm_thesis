@@ -30,8 +30,10 @@
                         </div>
                         <div class="form-group">
                             <label for="client_id">Select Client</label>
-                            <select name="client_id" id="client_id">
-                                
+                            <select name="client_id" id="client_id" class="custom-select">
+                                @foreach($data['clients'] as $client)
+                                    <option value="{{ $client['id'] }}">{{ $client["client_f_name"] . " " . $client["client_l_name"]}}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -235,6 +237,10 @@
     });
     google.charts.load('current', {'packages':['gantt']});
     google.charts.setOnLoadCallback(drawChart); 
+
+    $("#client_id").on("change", function(){
+        project_data.client_id = $(this).val();
+    });
 
     $('#supply_table tbody').on( 'click', 'button', function () {
         console.log("before:" , project_data.supplies);

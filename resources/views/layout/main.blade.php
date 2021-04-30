@@ -50,6 +50,7 @@
                                 </div>
                                 <div class="tab-pane fade" id="list-expediter" role="tabpanel" aria-labelledby="list-expediter-list">
                                     <p>Expediter mao ni ang mo manage sa mga supplies</p>
+                                    <a href="{{ route('loginexpediter') }}" class="btn btn-primary">Login</a>
                                 </div>
                                 <div class="tab-pane fade" id="list-client" role="tabpanel" aria-labelledby="list-expediter-list">
                                     <p>Client Mao ni sila ang moreklamo ug maka kita sa progress sa ilang balay litsi!</p>

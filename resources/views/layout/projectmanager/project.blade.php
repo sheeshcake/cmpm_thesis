@@ -35,8 +35,10 @@
                         </div>
                         <div class="form-group">
                             <label for="client_id">Select Client</label>
-                            <select name="client_id" id="client_id">
-                                
+                            <select name="client_id" id="client_id" class="custom-select" disabled>
+                                @foreach($data['clients'] as $client)
+                                    <option value="{{ $client['id'] }}" @if($data['project'][0]['client_id'] == $client['id']) selected @endif>{{ $client["client_f_name"] . " " . $client["client_l_name"]}}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -96,7 +98,48 @@
                     </thead>
                     <tbody>
                     </tbody>
+                </table><hr>
+                <h3>Project Supplies</h3>
+                <form action="#" id="supply_form">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="supply_name">Supply Name</label>
+                                <input type="text" class="form-control" id="supply_name" required>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="supply_description">Supply Description</label>
+                                <input type="text" class="form-control" id="supply_description" required>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="supply_count">Supply Count</label>
+                                <input type="number" class="form-control" id="supply_count" required>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="supply_count">Action</label>
+                                <button class="btn btn-primary form-control" id="add_supply">Add Supply</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <table class="table table-striped" id="supply_table">
+                    <thead>
+                        <th>Supply Name</th>
+                        <th>Supply Description</th>
+                        <th>Supply Count</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
                 </table>
+                <hr>
                 <button class="btn btn-success mt-2" id="submit_plan">Update Project</button>
             </div>
         </div>
@@ -125,9 +168,59 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
     var data, chart, db_data, task_counter = 0, $counter = 0;
-    var table = $('#plan_table').DataTable();
+    var table = $('#plan_table').DataTable({
+        "columnDefs": [ {
+            "targets": -1,
+            "data": null,
+            "defaultContent": "<button class='btn btn-danger'>Delete</button>"
+        } ]
+    });
+    var supply_table = $("#supply_table").DataTable({
+        "columnDefs": [ {
+            "targets": -1,
+            "data": null,
+            "defaultContent": "<button class='btn btn-danger'>Delete</button>"
+        } ]
+    });
 
+    $("#supply_form").on("submit", function(e){
+        e.preventDefault();
+        db_data.supplies.push({
+            "supply_name" : $("#supply_name").val(),
+            "supply_description" : $("#supply_description").val(),
+            "supply_count" : $("#supply_count").val()
+        });
+        console.log("added:" , db_data.supplies);
+        supply_table.row.add([
+            $("#supply_name").val(),
+            $("#supply_description").val(),
+            $("#supply_count").val()
+        ]).draw().node();
+        $("#supply_name").val("");
+        $("#supply_description").val("");
+        $("#supply_count").val("");
+    });
 
+    $('#plan_table tbody').on( 'click', 'button', function () {
+        var rowId = table.row( $(this).parents('tr') ).index();
+        db_data.plans.splice(rowId, 1);
+        table.row(rowId).remove().draw();
+        data.removeRow(rowId);
+        console.log(db_data.plans.length);
+        if(db_data.plans.length > 0){
+            chart.draw(data);
+        }else{
+            $("#chart_div").hide();
+        }
+        
+    });
+    $('#supply_table tbody').on( 'click', 'button', function () {
+        var rowId = table.row( $(this).parents('tr') ).index();
+        db_data.plans.splice(rowId, 1);
+        supply_table.row(rowId).remove().draw();
+        data.removeRow(rowId);
+        
+    });
     function init_data(){
         $.ajaxSetup({
             headers: {
@@ -159,32 +252,38 @@
         chart = new google.visualization.Gantt(document.getElementById('chart_div'));
         var itemsProcessed = 0;
         db_data["plans"].forEach(function(element, index, array){
-                data.addRow([
-                    "plan-" + index ,
-                    element["plan_name"],
-                    element["plan_priority"],
-                    new Date(element["plan_date_start"]),
-                    new Date(element["plan_date_end"]),
-                    1,
-                    0,
-                    element["plan_dependency"]
-                ]);
-                table.row.add([
-                    element["plan_name"],
-                    element["plan_date_start"],
-                    element["plan_date_end"],
-                    element["plan_dependency"],
-                    element["plan_priority"],
-                    "<button class='btn btn-danger remove_plan' onclick='removePlan(" + index + ")'>Delete</button>"
-                ]).draw();
-                $("#plan_parent").append(new Option(element["plan_name"], index));
-                itemsProcessed++;
-                if(itemsProcessed === array.length) {
-                    $counter = array.length;
-                    chart.draw(data, {height: 300, title: db_data.project_name});
-                }
-            });
-        
+            data.addRow([
+                "plan-" + index ,
+                element["plan_name"],
+                element["plan_priority"],
+                new Date(element["plan_date_start"]),
+                new Date(element["plan_date_end"]),
+                1,
+                0,
+                element["plan_dependency"]
+            ]);
+            table.row.add([
+                element["plan_name"],
+                element["plan_date_start"],
+                element["plan_date_end"],
+                element["plan_dependency"],
+                element["plan_priority"],
+                "<button class='btn btn-danger remove_plan' onclick='removePlan(" + index + ")'>Delete</button>"
+            ]).draw();
+            $("#plan_parent").append(new Option(element["plan_name"], index));
+            itemsProcessed++;
+            if(itemsProcessed === array.length) {
+                $counter = array.length;
+                chart.draw(data, {height: 300, title: db_data.project_name});
+            }
+        });
+        db_data["supplies"].forEach(function(element){
+            supply_table.row.add([
+                element["supply_name"],
+                element["supply_description"],
+                element["supply_count"]
+            ]).draw();
+        });
         $("#plan-details").on("submit", function(e){
             e.preventDefault();
             if($("plan_input input[required]").filter(function () {

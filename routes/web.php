@@ -9,6 +9,7 @@ use Illuminate\Http\Controllers\ProjectManagerController;
 use Illuminate\Http\Controllers\CivilEngineerController;
 use Illuminate\Http\Controllers\EmployeeController;
 use Illuminate\Http\Controllers\ProjectsController;
+use Illuminate\Http\Controllers\ClientController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,8 +47,18 @@ use Illuminate\Http\Controllers\ProjectsController;
 
     Route::group(['middleware' => ['auth'], 'guard' => ['projectmanager']], function(){
         Route::prefix('/clients')->group(function(){
-            Route::get("/newclient", function(){})->name("newclient");
-            Route::get("/", function(){})->name("clients");
+            Route::get("/newclient", "ClientController@ShowNewClient")->name("newclient");
+            Route::post("/newclient", "ClientController@AddClient")->name("addclient");
+            Route::get("/updateclient", "ClientController@UpdateClient")->name("updateclient");
+            Route::get("/showclient/{id}", "ClientController@ShowClient")->name("showclient");
+            Route::get("/", "ClientController@ShowAllClients")->name("clients");
+        });
+    });
+
+    Route::group(['middleware' => ['auth'], 'guard' => ['expediter']], function(){
+        Route::prefix("/projects")->group(function(){
+            Route::get("/", "ProjectController@ShowAllProjects")->name('projects');
+            Route::get("/project/{id}", "SupplyController@ShowProject")->name("project");
         });
     });
 
@@ -55,6 +66,10 @@ use Illuminate\Http\Controllers\ProjectsController;
     Route::prefix('/login')->group(function(){
         Route::get("/", "LoginController@ShowLogin");
         Route::post("/", "LoginController@DoLogin")->name('login');
+    });
+    Route::prefix('/loginexpediter')->group(function(){
+        Route::get("/", "LoginExpediterController@ShowLogin");
+        Route::post("/", "LoginExpediterController@DoLogin")->name('loginexpediter');
     });
     Route::prefix('/loginprojectmanager')->group(function(){
         Route::get("/", "LoginProjectManagerController@ShowLogin");

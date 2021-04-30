@@ -62,6 +62,8 @@ class ProjectController extends Controller
         $project_data = $project_details[0];
         $project_plans = Plans::where("project_id", "=", $request->project_id)->get()->toArray();
         $project_data["plans"] = $project_plans;
+        $project_supplies = Supplies::where("project_id", "=", $request->project_id)->get()->toArray();
+        $project_data["supplies"] = $project_supplies;
         foreach($project_plans as $key => $plans){
             $project_tasks = Tasks::where("plan_id", "=", $plans["id"])->get()->toArray();
             // dd($project_tasks[0]);
@@ -74,33 +76,55 @@ class ProjectController extends Controller
         $users = User::where("role" , "=", "foreman")
                     ->orWhere("role", "=", "civilengineer")
                     ->get();
+        $clients = Clients::all();
         $project = Projects::where("id", "=", $request->id)->get()->toArray();
         return view("layout." . Auth::user()->role . ".project")->with("data", [
             "project" => $project,
             "role" => Auth::user()->role,
             "users" => $users,
-            "page" => $project[0]["project_name"]
+            "page" => $project[0]["project_name"],
+            "clients" => $clients
         ]);
     }
 
     public function UpdateProject(Request $request){
+        //updating the project problem
         Project::where("id", "=", $request->project_id)
                 ->update([
                     "project_name" => $request->data["project_name"],
                     "project_address" => $request->data["project_address"],
                     "client_id" => $request->data["client_id"]
                     ]);
-        Plans::join("tasks", "tasks.plan_id", "=", "plans.plan_id")
-            ->where("plans.project_id", "=", $request->project_id)->delete();
+        // Plans::join("tasks", "tasks.plan_id", "=", "plans.plan_id")
+        //     ->where("plans.project_id", "=", $request->project_id)->delete();
         foreach($request->data['plans'] as $data){
-            $plans = new Plans();
-            $plans->project_id = $project_id;
-            $plans->plan_name = $data[0];
-            $plans->plan_date_start = $data[1];
-            $plans->plan_date_end = $data[2];
-            $plans->plan_priority = $data[3];
-            $plans->plan_dependency = $data[4];
-            $plans->save();
+            $plans = Plans::where("id", "=", $data->project_id)->get();
+            if(!empty($plans)){
+                Plans::where("id", "=", $plans->id)
+                    ->update([
+                        "project_id" => $request->project_id,
+                        "plan_name" =>
+                    ])
+            }else{
+                $plans = new Plans();
+                $plans->project_id = $project_id;
+                $plans->plan_name = $data[0];
+                $plans->plan_date_start = $data[1];
+                $plans->plan_date_end = $data[2];
+                $plans->plan_priority = $data[3];
+                $plans->plan_dependency = $data[4];
+                $plans->save();
+            }
+
+        }
+        Supplies::where("project_id", "=", $request->project_id)->delete();
+        foreach($request->data['supplies'] as $supply_data){
+            $supplies = new Supplies();
+            $supplies->project_id = $project_id;
+            $supplies->supply_name = $supply_data["supply_name"];
+            $supplies->supply_description = $supply_data["supply_description"];
+            $supplies->supply_count = $supply_data["supply_count"];
+            $supplies->save();
         }
     }
 

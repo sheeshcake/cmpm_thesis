@@ -57,6 +57,10 @@ return [
         'civilengineer' => [
             'driver' => 'session',
             'provider' => 'civilengineers'
+        ],
+        'expediter' => [
+            'driver' => 'session',
+            'provider' => 'expediters'
         ]
     ],
 
@@ -93,6 +97,10 @@ return [
         'civilengineers' => [
             'driver' => 'eloquent',
             'model' => App\Models\CivilEngineer::class,
+        ],
+        'expediters' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Expediter::class,
         ]
         // 'users' => [
         //     'driver' => 'database',
