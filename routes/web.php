@@ -21,7 +21,7 @@ use Illuminate\Http\Controllers\ClientController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-    Route::group(['middleware' => ['auth'], 'guard' => ['admin']],function(){
+    Route::group(['middleware' => ['auth'], 'guard' => ['admin', 'hr']],function(){
         Route::get("/employee/{id}", "EmployeeController@ShowEmployee")->name("employee");
         Route::prefix("/employees")->group(function(){
             Route::get("/", "EmployeeController@ShowAllEmployees")->name("employees");
@@ -40,8 +40,21 @@ use Illuminate\Http\Controllers\ClientController;
             Route::get("/newproject", "ProjectController@ShowAddProject")->name("newproject");
             Route::post("/addproject", "ProjectController@AddProject")->name("addproject");
             Route::post("/removeproject", "ProjectController@RemoveProject")->name("removeproject");
-            Route::post("/updateproject", "ProjectController@UpdateProject")->name("updateproject");
-            Route::post("/updatetask", "ProjectController@UpdateTasks")->name("updatetasks");
+            //Task CRUD
+            Route::post("/addtask", "TaskController@AddTask")->name("addtask");
+            Route::post("/removetask", "TaskController@RemoveTask")->name("removetask");
+            Route::post("/updatetask", "TaskController@UpdateTask")->name("updatetask");
+
+            //Plan CRUD
+            Route::post("/addplan", "PlanController@AddPlan")->name("addplan");
+            Route::post("/removeplan", "PlanController@RemovePlan")->name("removeplan");
+            Route::post("/updateplan", "PlanController@UpdatePlan")->name("updateplan");
+
+            //Supply CRUD
+            Route::post("/addsupply", "SupplyController@AddSupply")->name("addsupply");
+            Route::post("/removesupply", "SupplyController@RemoveSupply")->name("removesupply");
+            Route::post("/updatesupply", "SupplyController@UpdateSupply")->name("updatesupply");
+
         });
     });
 
@@ -57,8 +70,7 @@ use Illuminate\Http\Controllers\ClientController;
 
     Route::group(['middleware' => ['auth'], 'guard' => ['expediter']], function(){
         Route::prefix("/projects")->group(function(){
-            Route::get("/", "ProjectController@ShowAllProjects")->name('projects');
-            Route::get("/project/{id}", "SupplyController@ShowProject")->name("project");
+            Route::get("/", "ProjectController@ShowAllProjects");
         });
     });
 

@@ -89,6 +89,7 @@
                 </form>
                 <table class="table table-striped" id="plan_table">
                     <thead>
+                        <th>Plan ID</th>
                         <th>Plan Name</th>
                         <th>Date Start</th>
                         <th>Date End</th>
@@ -130,6 +131,7 @@
                 </form>
                 <table class="table table-striped" id="supply_table">
                     <thead>
+                        <th>Supply ID</th>
                         <th>Supply Name</th>
                         <th>Supply Description</th>
                         <th>Supply Count</th>
@@ -140,7 +142,7 @@
                     </tbody>
                 </table>
                 <hr>
-                <button class="btn btn-success mt-2" id="submit_plan">Update Project</button>
+                <!-- <button class="btn btn-success mt-2" id="submit_plan">Update Project</button> -->
             </div>
         </div>
         <div class="modal fade" id="plan_modal" tabindex="-1" role="dialog" aria-labelledby="plan_name" aria-hidden="true">
@@ -185,20 +187,40 @@
 
     $("#supply_form").on("submit", function(e){
         e.preventDefault();
+        var d;
         db_data.supplies.push({
             "supply_name" : $("#supply_name").val(),
             "supply_description" : $("#supply_description").val(),
             "supply_count" : $("#supply_count").val()
         });
         console.log("added:" , db_data.supplies);
-        supply_table.row.add([
-            $("#supply_name").val(),
-            $("#supply_description").val(),
-            $("#supply_count").val()
-        ]).draw().node();
-        $("#supply_name").val("");
-        $("#supply_description").val("");
-        $("#supply_count").val("");
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: "{{route('addsupply')}}",
+            method: "POST",
+            data:{
+                "project_id" : "{{ $data['project'][0]['id'] }}",
+                "supply_name" : $("#supply_name").val(),
+                "supply_description" : $("#supply_description").val(),
+                "supply_count" : $("#supply_count").val()
+            },
+            success: function(e){
+                d = JSON.parse(e);
+                supply_table.row.add([
+                    d["id"],
+                    $("#supply_name").val(),
+                    $("#supply_description").val(),
+                    $("#supply_count").val()
+                ]).draw().node();
+                $("#supply_name").val("");
+                $("#supply_description").val("");
+                $("#supply_count").val("");
+            }
+        });
     });
 
     $('#plan_table tbody').on( 'click', 'button', function () {
@@ -217,7 +239,24 @@
     $('#supply_table tbody').on( 'click', 'button', function () {
         var rowId = table.row( $(this).parents('tr') ).index();
         db_data.plans.splice(rowId, 1);
+        var id = supply_table.row(rowId).data()[0];
         supply_table.row(rowId).remove().draw();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: "{{route('removesupply')}}",
+            method: "POST",
+            data:{
+                "id": id
+            },
+            success: function(e){
+                d = JSON.parse(e);
+                alert(d["alert"]);
+            }
+        });
         data.removeRow(rowId);
         
     });
@@ -252,6 +291,10 @@
         chart = new google.visualization.Gantt(document.getElementById('chart_div'));
         var itemsProcessed = 0;
         db_data["plans"].forEach(function(element, index, array){
+            $dependency = element["plan_dependency"];
+            if($dependency == "null"){
+                $dependency = null;
+            }
             data.addRow([
                 "plan-" + index ,
                 element["plan_name"],
@@ -260,9 +303,10 @@
                 new Date(element["plan_date_end"]),
                 1,
                 0,
-                element["plan_dependency"]
+                $dependency
             ]);
             table.row.add([
+                element["id"],
                 element["plan_name"],
                 element["plan_date_start"],
                 element["plan_date_end"],
@@ -279,11 +323,13 @@
         });
         db_data["supplies"].forEach(function(element){
             supply_table.row.add([
+                element["id"],
                 element["supply_name"],
                 element["supply_description"],
                 element["supply_count"]
             ]).draw();
         });
+
         $("#plan-details").on("submit", function(e){
             e.preventDefault();
             if($("plan_input input[required]").filter(function () {
@@ -321,6 +367,25 @@
                     "plan_priority" : $("#plan_priority").val(),
                     "plan_dependency" : parent,
                     "tasks" : []
+                });
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: "{{route('addplan')}}",
+                    method: "POST",
+                    data:{
+                        "project_id" : "{{ $data['project'][0]['id'] }}",
+                        "plan_date_start" : $("#plan_date_start").val(),
+                        "plan_date_end" : $("#plan_date_end").val(),
+                        "plan_priority" : $("#plan_priority").val(),
+                        "plan_dependency" : parent,
+                    },
+                    success: function(e){
+                        alert(e);
+                    }
                 });
                 chart.draw(data, {height: 300, title: db_data.project_name});
                 $counter++;

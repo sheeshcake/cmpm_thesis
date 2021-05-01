@@ -32,7 +32,7 @@
 
 <!-- Nav Item - Charts -->
 <li class="nav-item">
-    <a class="nav-link" href="{{ route('projects') }}">
+    <a class="nav-link" href="/projects">
         <i class="fas fa-fw fa-drafting-compass"></i>
         <span>Projects</span></a>
 </li>
