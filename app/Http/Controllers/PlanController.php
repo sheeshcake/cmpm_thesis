@@ -10,9 +10,21 @@ use App\Models\Plans;
 class PlanController extends Controller
 {
     public function AddPlan(Request $request){
-        $data = Plans::create($request->except(["_token"]));
+        // dd($request);
+        $plan = new Plans();
+        $plan->project_id = $request->project_id;
+        $plan->plan_name = $request->plan_name;
+        $plan->plan_date_start = $request->plan_date_start;
+        $plan->plan_date_end = $request->plan_date_end;
+        $plan->plan_priority = $request->plan_priority;
+        $plan->plan_dependency = $request->plan_dependency;
+        $plan->save();
+        $data = $plan->id;
         if($data){
-            echo "Plan Added!";
+            echo json_encode([
+                "alert" => "Plan Added!",
+                "id" => $data
+            ]);
         }else{
             echo "Error on Adding Plan";
         }

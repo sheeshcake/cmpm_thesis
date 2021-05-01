@@ -22,7 +22,9 @@
                     {{ Session::get('success')}}
                 </div>
                 @endif
-                <div class="my-3 min-vw-25" id="chart_div"></div>
+                <div class="overflow-auto">
+                    <div class="my-3 h-100" id="chart_div"></div>
+                </div>
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
@@ -292,7 +294,7 @@
         var itemsProcessed = 0;
         db_data["plans"].forEach(function(element, index, array){
             $dependency = element["plan_dependency"];
-            if($dependency == "null"){
+            if($dependency == "plan-null"){
                 $dependency = null;
             }
             data.addRow([
@@ -318,7 +320,26 @@
             itemsProcessed++;
             if(itemsProcessed === array.length) {
                 $counter = array.length;
-                chart.draw(data, {height: 300, title: db_data.project_name});
+                var trackHeight = 40;
+                var options = {
+                    height: data.getNumberOfRows() * trackHeight,
+                    width: "100%",
+                    hAxis: {
+                        textStyle: {
+                            fontName: ["RobotoCondensedRegular"]
+                        }
+                    },
+                    gantt: {
+                        labelStyle: {
+                        fontName: ["RobotoCondensedRegular"],
+                        fontSize: 12,
+                        color: '#757575',
+                        },
+                        trackHeight: trackHeight
+                    }
+                };
+                console.log(data.getNumberOfRows() * trackHeight);
+                chart.draw(data, options);
             }
         });
         db_data["supplies"].forEach(function(element){
@@ -342,24 +363,6 @@
                     parent_name = $("#plan_parent option:selected").text();
                 }
                 $("#plan_parent").append(new Option( $("#plan_name_input").val(), "plan-" + $counter));
-                data.addRow([
-                    "plan-" + $counter ,
-                    $("#plan_name_input").val(),
-                    $("#plan_priority").val(),
-                    new Date($("#plan_date_start").val()),
-                    new Date($("#plan_date_end").val()),
-                    null,
-                    0,
-                    parent
-                ]);
-                table.row.add([
-                    $("#plan_name_input").val(),
-                    $("#plan_date_start").val(),
-                    $("#plan_date_end").val(),
-                    parent_name,
-                    $("#plan_priority").val(),
-                    "<button class='btn btn-danger remove_plan' onclick='removePlan(" + $counter + ")'>Delete</button>"
-                ]).draw().node();
                 db_data.plans.push({
                     "plan_name" : $("#plan_name_input").val(),
                     "plan_date_start" : $("#plan_date_start").val(),
@@ -368,6 +371,17 @@
                     "plan_dependency" : parent,
                     "tasks" : []
                 });
+                console.log(db_data["plans"].length);
+                data.addRow([
+                    "plan-" + db_data["plans"].length ,
+                    $("#plan_name_input").val(),
+                    $("#plan_priority").val(),
+                    new Date($("#plan_date_start").val()),
+                    new Date($("#plan_date_end").val()),
+                    null,
+                    0,
+                    parent
+                ]);
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -378,16 +392,47 @@
                     method: "POST",
                     data:{
                         "project_id" : "{{ $data['project'][0]['id'] }}",
+                        "plan_name" : $("#plan_name_input").val(),
                         "plan_date_start" : $("#plan_date_start").val(),
                         "plan_date_end" : $("#plan_date_end").val(),
                         "plan_priority" : $("#plan_priority").val(),
-                        "plan_dependency" : parent,
+                        "plan_dependency" : "plan-" + parent,
                     },
                     success: function(e){
+                        var d = JSON.parse(e);
+                        table.row.add([
+                            d["id"],
+                            $("#plan_name_input").val(),
+                            $("#plan_date_start").val(),
+                            $("#plan_date_end").val(),
+                            parent_name,
+                            $("#plan_priority").val(),
+                            "<button class='btn btn-danger remove_plan' onclick='removePlan(" + $counter + ")'>Delete</button>"
+                        ]).draw().node();
+
                         alert(e);
                     }
                 });
-                chart.draw(data, {height: 300, title: db_data.project_name});
+                var trackHeight = 40;
+                var options = {
+                    height: data.getNumberOfRows() * trackHeight,
+                    width: "100%",
+                    hAxis: {
+                        textStyle: {
+                            fontName: ["RobotoCondensedRegular"]
+                        }
+                    },
+                    gantt: {
+                        labelStyle: {
+                        fontName: ["RobotoCondensedRegular"],
+                        fontSize: 12,
+                        color: '#757575',
+                        },
+                        trackHeight: trackHeight
+                    }
+                };
+                console.log(data.getNumberOfRows() * trackHeight);
+                chart.draw(data, options);
                 $counter++;
             }
         });
@@ -412,7 +457,6 @@
         });
     }
     $(document).ready(function(){
-        // init_data();
         google.charts.load('current', {'packages':['gantt']});
         google.charts.setOnLoadCallback(init_data);
     });
