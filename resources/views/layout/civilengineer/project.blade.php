@@ -44,6 +44,7 @@
                 <hr>
                 <table class="table table-striped" id="plan_table">
                     <thead>
+                        <th>ID</th>
                         <th>Plan Name</th>
                         <th>Date Start</th>
                         <th>Date End</th>
@@ -71,13 +72,13 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="task_name_input">Task Name</label>
-                                        <input type="text" id="task_name_input" class="form-control" placeholder="Task Name">
+                                        <input type="text" id="task_name_input" class="form-control" placeholder="Task Name" required>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="task_priority">Task Priority</label>
-                                        <select id="task_priority" class="custom-select">
+                                        <select id="task_priority" class="custom-select" required>
                                             <option value="high">High</option>
                                             <option value="medium">Medium</option>
                                             <option value="low">Low</option>
@@ -87,7 +88,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="task_user">Assign To</label>
-                                        <select id="task_user" class="custom-select">
+                                        <select id="task_user" class="custom-select" required>
                                             @foreach($data["users"] as $user)
                                                 <option value="{{ $user['id'] }}">{{ $user["f_name"] . " " . $user["l_name"] }}</option>
                                             @endforeach
@@ -98,13 +99,13 @@
                                     <div class="col">
                                         <div class="form-group">
                                             <label for="task_start">Task Start</label>
-                                            <input type="date" id="task_start" class="form-control">
+                                            <input type="date" id="task_start" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="form-group">
                                             <label for="task_end">Task End</label>
-                                            <input type="date" id="task_end" class="form-control">
+                                            <input type="date" id="task_end" class="form-control" required>
                                         </div>
                                     </div>
                                     <button class="btn btn-success">Submit</button>
@@ -112,7 +113,20 @@
                             </div>
                         </form>
                         <hr>
-                        <div id="plan_tasks"></div>
+                        <table class="table table-striped" id="task_table">
+                            <thead>
+                                <th>ID</th>
+                                <th>Task Name</th>
+                                <th>Task Priority</th>
+                                <th>Assigned To</th>
+                                <th>Task Start</th>
+                                <th>Task End</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -129,7 +143,36 @@
 <script type="text/javascript">
     var data, chart, db_data, task_counter = 0, $counter = 0;
     var table = $('#plan_table').DataTable();
-
+    var task_table = $("#task_table").DataTable({
+        "columnDefs": [ {
+            "targets": -1,
+            "data": null,
+            "defaultContent": "<button class='btn btn-danger'>Delete</button>"
+        } ]
+    });
+    $('#task_table tbody').on( 'click', 'button', function () {
+        var rowId = table.row( $(this).parents('tr') ).index();
+        var id = task_table.row(rowId).data()[0];
+        task_table.row(rowId).remove().draw();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: "{{route('removetask')}}",
+            method: "POST",
+            data:{
+                "id": id
+            },
+            success: function(e){
+                d = JSON.parse(e);
+                alert(d["alert"]);
+            }
+        });
+        data.removeRow(rowId);
+        
+    });
     $("#task-form").on("submit", function(e){
         e.preventDefault();
         var task_name = $("#task_name_input").val();
@@ -137,27 +180,36 @@
         var assigned_to = $("#task_user").val();
         var task_start = $("#task_start").val();
         var task_end = $("#task_end").val();
-        db_data["plans"][$("#task_plan_id").val()].tasks.push({
-            "task_name" : task_name,
-            "task_priority" : task_priority,
-            "task_start" : task_start,
-            "task_end" : task_end, 
-            "assigned_to" : assigned_to
+        var plan_id = $("#task_plan_id").val();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
         });
-        task_counter++;
-        $("#plan_tasks").append(
-            '<div class="card p-3 mt-3">' +
-                '<div class="row">' +
-                    '<div class="col-lg-10 col-md-6">' +
-                        '<p> ' + task_name + ' </p>' +
-                        '<p> ' + task_start  + ' to ' + task_end + '</p>' +
-                    '</div>' +
-                    '<div class="col-lg-2 col-md-6">' +
-                        '<button class="btn btn-danger">Delete Task</button>' +
-                    '</div>' +
-                '</div>' +
-            '</div>' 
-        );
+        $.ajax({
+            url: "{{ route('addtask') }}",
+            method: "POST",
+            data: {
+                "plan_id" : plan_id,
+                "task_name" : task_name,
+                "task_priority" : task_priority,
+                "user_id" : assigned_to,
+                "task_date_start" : task_start,
+                "task_date_end" : task_end,
+                "task_status" : "pending"
+            },
+            success: function(d){
+                d = JSON.parse(d);
+                task_table.row.add([
+                    d["id"],
+                    task_name,
+                    task_priority,
+                    $("#task_user option:selected").text(),
+                    task_start,
+                    task_end
+                ]).draw();
+            }
+        })
     });
 
 
@@ -191,123 +243,86 @@
         data.addColumn('string', 'Dependencies');
         chart = new google.visualization.Gantt(document.getElementById('chart_div'));
         var itemsProcessed = 0;
-        db_data["plans"].forEach(function(element, index, array){
-                data.addRow([
-                    "plan-" + index ,
-                    element["plan_name"],
-                    element["plan_priority"],
-                    new Date(element["plan_date_start"]),
-                    new Date(element["plan_date_end"]),
-                    1,
-                    0,
-                    element["plan_dependency"]
-                ]);
-                table.row.add([
-                    element["plan_name"],
-                    element["plan_date_start"],
-                    element["plan_date_end"],
-                    element["plan_dependency"],
-                    element["plan_priority"]
-                ]).draw();
-                $("#plan_parent").append(new Option(element["plan_name"], index));
-                itemsProcessed++;
-                if(itemsProcessed === array.length) {
-                    $counter = array.length;
-                    chart.draw(data, {height: 300, title: db_data.project_name});
-                }
-            });
-        
-        $("#plan-details").on("submit", function(e){
-            e.preventDefault();
-            if($("plan_input input[required]").filter(function () {
-                    return $.trim($(this).val()).length == 0
-                }).length == 0){
-                var parent = null;
-                var parent_name = "None";
-                if($("#plan_parent").val() != null){
-                    parent = $("#plan_parent").val();
-                    parent_name = $("#plan_parent option:selected").text();
-                }
-                $("#plan_parent").append(new Option( $("#plan_name_input").val(), "plan-" + $counter));
-                data.addRow([
-                    "plan-" + $counter ,
-                    $("#plan_name_input").val(),
-                    $("#plan_priority").val(),
-                    new Date($("#plan_date_start").val()),
-                    new Date($("#plan_date_end").val()),
-                    null,
-                    0,
-                    parent
-                ]);
-                table.row.add([
-                    $("#plan_name_input").val(),
-                    $("#plan_date_start").val(),
-                    $("#plan_date_end").val(),
-                    parent_name,
-                    $("#plan_priority").val()
-                ]).draw().node();
-                db_data.plans.push({
-                    "plan_name" : $("#plan_name_input").val(),
-                    "plan_date_start" : $("#plan_date_start").val(),
-                    "plan_date_end" : $("#plan_date_end").val(),
-                    "plan_priority" : $("#plan_priority").val(),
-                    "plan_dependency" : parent,
-                    "tasks" : []
-                });
-                chart.draw(data, {height: 300, title: db_data.project_name});
-                $counter++;
+        db_data["plans"].forEach(async (element, index, array) => {
+            $dependency = element["plan_dependency"];
+            if($dependency == "plan-null" || $dependency == "null"){
+                $dependency = null;
             }
+            var plan_id = "plan-" + index;
+            data.addRow([
+                plan_id ,
+                element["plan_name"],
+                element["plan_priority"],
+                new Date(element["plan_date_start"]),
+                new Date(element["plan_date_end"]),
+                1,
+                0,
+                $dependency
+            ]);
+            table.row.add([
+                element["id"],
+                element["plan_name"],
+                element["plan_date_start"],
+                element["plan_date_end"],
+                element["plan_dependency"],
+                element["plan_priority"]
+            ]).draw();
+            $("#plan_parent").append(new Option(element["plan_name"], index));
         });
+        var trackHeight = 40;
+        var options = {
+            height: data.getNumberOfRows() * trackHeight,
+            width: "100%",
+            hAxis: {
+                textStyle: {
+                    fontName: ["RobotoCondensedRegular"]
+                }
+            },
+            gantt: {
+                labelStyle: {
+                fontName: ["RobotoCondensedRegular"],
+                fontSize: 12,
+                color: '#757575',
+                },
+                trackHeight: trackHeight
+            }
+        };
+        chart.draw(data, options);
         google.visualization.events.addListener(chart, 'select', function(){
             var selections = chart.getSelection();
             var selection = selections[0];
+            task_table.clear();
             $("#plan_name").text(data.getValue(selection.row, 1));
-            var plan_details = data.getValue(selection.row, 0).split("-");
-            $("#plan_tasks").html("");
-            db_data["plans"][plan_details[1]]["tasks"].forEach(function(element){
-                $("#plan_tasks").append(
-                    '<div class="card p-3 mt-3">' +
-                        '<div class="row">' +
-                            '<div class="col-lg-10 col-md-6">' +
-                                '<p> ' + element.task_name + ' </p>' +
-                                '<p> ' + element.task_date_start  + ' to ' + element.task_date_end + '</p>' +
-                            '</div>' +
-                            '<div class="col-lg-2 col-md-6">' +
-                                '<button class="btn btn-danger">Delete Task</button>' +
-                            '</div>' +
-                        '</div>' +
-                    '</div>' 
-                );
+            $("#task_plan_id").val(selection.row);
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
             });
-            $("#task_plan_id").val(plan_details[1]);
-            $("#submit_tasks").val(plan_details[1]);
+            $.ajax({
+                url: "{{ route('gettasks') }}",
+                method: "post",
+                data:{
+                    plan_id : selection.row
+                },
+                success: function(d){
+                    d = JSON.parse(d);
+                    d.forEach(async (item) => {
+                        task_table.row.add([
+                            item.task_id,
+                            item.task_name,
+                            item.task_priority,
+                            item.f_name + " " + item.l_name,
+                            item.task_date_start,
+                            item.task_date_end
+                        ]).draw();
+                    });
+
+                }
+            })
             $('#plan_modal').modal('show');
         });
     }
-    $("#submit_tasks").click(function(){
-        console.log($(this).val());
-        console.log($(this).attr("plan_id"));
-        console.log(db_data["plans"][$("#task_plan_id").val()].tasks);
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            url: "{{ route('updatetasks') }}",
-            method: "POST",
-            data:{
-                "plan_id" : $(this).val()   ,
-                "tasks": db_data["plans"][$(this).val()].tasks
-            },
-            success: function(e){
-                console.log(e);
-            }
-        })
-    });
-    // function send_tasks(btn){
-    //     console.log(btn.val());
-    // }
     $(document).ready(function(){
         // init_data();
         google.charts.load('current', {'packages':['gantt']});

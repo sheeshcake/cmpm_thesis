@@ -292,13 +292,14 @@
         data.addColumn('string', 'Dependencies');
         chart = new google.visualization.Gantt(document.getElementById('chart_div'));
         var itemsProcessed = 0;
-        db_data["plans"].forEach(function(element, index, array){
+        db_data["plans"].forEach(async (element, index, array) => {
             $dependency = element["plan_dependency"];
-            if($dependency == "plan-null"){
+            if($dependency == "plan-null" || $dependency == "null"){
                 $dependency = null;
             }
+            var plan_id = "plan-" + index;
             data.addRow([
-                "plan-" + index ,
+                plan_id ,
                 element["plan_name"],
                 element["plan_priority"],
                 new Date(element["plan_date_start"]),
@@ -313,36 +314,11 @@
                 element["plan_date_start"],
                 element["plan_date_end"],
                 element["plan_dependency"],
-                element["plan_priority"],
-                "<button class='btn btn-danger remove_plan' onclick='removePlan(" + index + ")'>Delete</button>"
+                element["plan_priority"]
             ]).draw();
             $("#plan_parent").append(new Option(element["plan_name"], index));
-            itemsProcessed++;
-            if(itemsProcessed === array.length) {
-                $counter = array.length;
-                var trackHeight = 40;
-                var options = {
-                    height: data.getNumberOfRows() * trackHeight,
-                    width: "100%",
-                    hAxis: {
-                        textStyle: {
-                            fontName: ["RobotoCondensedRegular"]
-                        }
-                    },
-                    gantt: {
-                        labelStyle: {
-                        fontName: ["RobotoCondensedRegular"],
-                        fontSize: 12,
-                        color: '#757575',
-                        },
-                        trackHeight: trackHeight
-                    }
-                };
-                console.log(data.getNumberOfRows() * trackHeight);
-                chart.draw(data, options);
-            }
         });
-        db_data["supplies"].forEach(function(element){
+        db_data["supplies"].forEach(async (element) => {
             supply_table.row.add([
                 element["id"],
                 element["supply_name"],
@@ -350,7 +326,25 @@
                 element["supply_count"]
             ]).draw();
         });
-
+        var trackHeight = 40;
+        var options = {
+            height: data.getNumberOfRows() * trackHeight,
+            width: "100%",
+            hAxis: {
+                textStyle: {
+                    fontName: ["RobotoCondensedRegular"]
+                }
+            },
+            gantt: {
+                labelStyle: {
+                fontName: ["RobotoCondensedRegular"],
+                fontSize: 12,
+                color: '#757575',
+                },
+                trackHeight: trackHeight
+            }
+        };
+        chart.draw(data, options);
         $("#plan-details").on("submit", function(e){
             e.preventDefault();
             if($("plan_input input[required]").filter(function () {
@@ -363,15 +357,6 @@
                     parent_name = $("#plan_parent option:selected").text();
                 }
                 $("#plan_parent").append(new Option( $("#plan_name_input").val(), "plan-" + $counter));
-                db_data.plans.push({
-                    "plan_name" : $("#plan_name_input").val(),
-                    "plan_date_start" : $("#plan_date_start").val(),
-                    "plan_date_end" : $("#plan_date_end").val(),
-                    "plan_priority" : $("#plan_priority").val(),
-                    "plan_dependency" : parent,
-                    "tasks" : []
-                });
-                console.log(db_data["plans"].length);
                 data.addRow([
                     "plan-" + db_data["plans"].length ,
                     $("#plan_name_input").val(),
@@ -409,8 +394,6 @@
                             $("#plan_priority").val(),
                             "<button class='btn btn-danger remove_plan' onclick='removePlan(" + $counter + ")'>Delete</button>"
                         ]).draw().node();
-
-                        alert(e);
                     }
                 });
                 var trackHeight = 40;
@@ -432,7 +415,7 @@
                     }
                 };
                 console.log(data.getNumberOfRows() * trackHeight);
-                chart.draw(data, options);
+                chart.draw(data);
                 $counter++;
             }
         });

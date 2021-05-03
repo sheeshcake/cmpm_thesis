@@ -52,9 +52,6 @@ class SupplyController extends Controller
 
         $data = Supplies::where("id", "=", $request->id)
                 ->update([
-                    "supply_name" => $request->supply_name,
-                    "supply_description" => $request->supply_description,
-                    "supply_count" => $request->supply_count,
                     "supply_price" => $request->supply_price
                 ]);
         if($data){

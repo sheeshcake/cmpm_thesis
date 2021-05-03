@@ -41,6 +41,7 @@ use Illuminate\Http\Controllers\ClientController;
             Route::post("/addproject", "ProjectController@AddProject")->name("addproject");
             Route::post("/removeproject", "ProjectController@RemoveProject")->name("removeproject");
             //Task CRUD
+            Route::post("/gettasks", "TaskController@GetTasks")->name("gettasks");
             Route::post("/addtask", "TaskController@AddTask")->name("addtask");
             Route::post("/removetask", "TaskController@RemoveTask")->name("removetask");
             Route::post("/updatetask", "TaskController@UpdateTask")->name("updatetask");

@@ -41,7 +41,7 @@
     <div id="projectcollapse" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Tools:</h6>
-            <a class="collapse-item" href="{{ route('projects') }}">Show All Projects</a>
+            <a class="collapse-item" href="/projects">Show All Projects</a>
         </div>
     </div>
     <!-- <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#clientcollapse"
