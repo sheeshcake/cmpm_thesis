@@ -47,6 +47,7 @@
                                 </div>
                                 <div class="tab-pane fade" id="list-foreman" role="tabpanel" aria-labelledby="list-foreman-list">
                                     <p>Foreman Mao ni sila ang hatagan always sa task tas sila na bahala mo sugo sa mga laborers, mason, etc..</p>
+                                    <a href="{{ route('loginforeman') }}" class="btn btn-primary">Login</a>
                                 </div>
                                 <div class="tab-pane fade" id="list-expediter" role="tabpanel" aria-labelledby="list-expediter-list">
                                     <p>Expediter mao ni ang mo manage sa mga supplies</p>

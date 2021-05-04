@@ -62,4 +62,16 @@ class TaskController extends Controller
         echo json_encode($data);
     }
 
+    public function TaskDone(Request $request){
+        $data = Tasks::where("id", "=", $request->id)
+        ->update([
+            "task_status" => "complete"
+        ]);
+        if($data){
+            echo "Task Updated!";
+        }else{
+            echo "Error on Updating task";
+        }
+    }
+
 }

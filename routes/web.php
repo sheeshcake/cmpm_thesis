@@ -59,6 +59,10 @@ use Illuminate\Http\Controllers\ClientController;
         });
     });
 
+    Route::group(['middleware' =>['auth'], 'guard' => ['foreman']], function(){
+        Route::get("/dashboard", "DashboardController@ShowDashboard");
+    });
+
     Route::group(['middleware' => ['auth'], 'guard' => ['projectmanager']], function(){
         Route::prefix('/clients')->group(function(){
             Route::get("/newclient", "ClientController@ShowNewClient")->name("newclient");
@@ -91,6 +95,11 @@ use Illuminate\Http\Controllers\ClientController;
     Route::prefix('/logincivilengineer')->group(function(){
         Route::get("/", "LoginCivilEngineerController@ShowLogin");
         Route::post("/", "LoginCivilEngineerController@DoLogin")->name('logincivilengineer');
+    });
+
+    Route::prefix('/loginforeman')->group(function(){
+        Route::get("/", "LoginForemanController@ShowLogin");
+        Route::post("/", "LoginForemanController@DoLogin")->name('loginforeman');
     });
 
     Route::prefix('/register')->group(function(){
