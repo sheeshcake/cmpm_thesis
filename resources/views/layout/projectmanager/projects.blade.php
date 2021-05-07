@@ -21,7 +21,9 @@
                 </div>
                 <div class="col-lg-2 col-md-6">
                     <a href="/projects/project/{{ $project['project_id'] }}" class="btn btn-primary">Open</a>
-                    <a href="" class="btn btn-danger">Delete</a>
+                    @if($project["project_status"] != "approved")
+                        <a href="{{ route('removeproject', $project['project_id'] ) }}" class="btn btn-danger" >Delete</a>
+                    @endif
                 </div>
             </div>
         </div>

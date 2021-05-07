@@ -31,8 +31,8 @@ use Illuminate\Http\Controllers\ClientController;
             Route::post("/updateemployee", "EmployeeController@UpdateEmployee")->name("updateemployee");
         });
     });
+    Route::get("/dashboard", "DashboardController@ShowDashboard")->name("dashboard");
     Route::group(['middleware' => ['auth'], 'guard'=>['projectmanager', 'admin', 'civilengineer']], function(){
-        Route::get("/dashboard", "DashboardController@ShowDashboard")->name("dashboard");
         Route::prefix("/projects")->group(function(){
             Route::get("/", "ProjectController@ShowAllProjects")->name("projects");
             Route::post("/getdata", "ProjectController@GetProjectData")->name("getdata");
@@ -40,6 +40,8 @@ use Illuminate\Http\Controllers\ClientController;
             Route::get("/newproject", "ProjectController@ShowAddProject")->name("newproject");
             Route::post("/addproject", "ProjectController@AddProject")->name("addproject");
             Route::post("/removeproject", "ProjectController@RemoveProject")->name("removeproject");
+            Route::post('/approveproject', "ProjectController@ApproveProject")->name("approveproject");
+
             //Task CRUD
             Route::post("/gettasks", "TaskController@GetTasks")->name("gettasks");
             Route::post("/addtask", "TaskController@AddTask")->name("addtask");
@@ -55,12 +57,10 @@ use Illuminate\Http\Controllers\ClientController;
             Route::post("/addsupply", "SupplyController@AddSupply")->name("addsupply");
             Route::post("/removesupply", "SupplyController@RemoveSupply")->name("removesupply");
             Route::post("/updatesupply", "SupplyController@UpdateSupply")->name("updatesupply");
+            
+            
 
         });
-    });
-
-    Route::group(['middleware' =>['auth'], 'guard' => ['foreman']], function(){
-        Route::get("/dashboard", "DashboardController@ShowDashboard");
     });
 
     Route::group(['middleware' => ['auth'], 'guard' => ['projectmanager']], function(){

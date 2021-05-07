@@ -147,7 +147,7 @@
         "columnDefs": [ {
             "targets": -1,
             "data": null,
-            "defaultContent": "<button class='btn btn-danger'>Delete</button>"
+            "defaultContent": "<button class='btn btn-danger @if($data['project'][0]['project_status'] == 'approved') disabled @endif'>Delete</button>"
         } ]
     });
     $('#task_table tbody').on( 'click', 'button', function () {

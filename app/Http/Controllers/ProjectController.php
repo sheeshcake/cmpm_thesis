@@ -85,6 +85,19 @@ class ProjectController extends Controller
             "clients" => $clients
         ]);
     }
+    public function ApproveProject(Request $request){
+        Projects::where("id", "=", $request->id)
+                        ->update([
+                            "project_status" => "approved"
+                        ]);
+        return redirect(route("showproject", $request->id));
+    }
+
+    public function RemoveProject($id){
+        Projects::where("id", "=", $id)
+                ->delete();
+        return redirect(route('projects'));
+    }
 
     // public function UpdateProject(Request $request){
     //     //updating the project problem

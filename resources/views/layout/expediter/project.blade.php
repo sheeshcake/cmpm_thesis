@@ -29,11 +29,11 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="project_name_input">Project Name</label>
-                            <input type="text" class="form-control" id="project_name_input" placeholder="Project Name" value="{{ $data['project'][0]['project_name'] }}" readonly>
+                            <input type="text" class="form-control" id="project_name_input" placeholder="Project Name" value="{{ $data['project'][0]['project_name'] }}" readonly @if($data['project'][0]['project_status'] == "approved") disabled @endif>
                         </div>
                         <div class="form-group">
                             <label for="project_address">Project Address</label>
-                            <input type="text" class="form-control" id="project_address_input" placeholder="Project Address" value="{{ $data['project'][0]['project_address'] }}" readonly>
+                            <input type="text" class="form-control" id="project_address_input" placeholder="Project Address" value="{{ $data['project'][0]['project_address'] }}" readonly @if($data['project'][0]['project_status'] == "approved") disabled @endif> 
                         </div>
                         <div class="form-group">
                             <label for="client_id">Select Client</label>
@@ -75,7 +75,7 @@
                 <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="supply_modaltitle">Update Supply</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @if($data['project'][0]['project_status'] == "approved") disabled @endif>
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -96,7 +96,7 @@
                             <input type="hidden" id="supply_id">
                             <div class="form-group">
                                 <label for="">Supply Price</label>
-                                <input type="number" step="any" id="supply_price" required class="form-control">
+                                <input type="number" step="any" id="supply_price" required class="form-control" @if($data['project'][0]['project_status'] == 'approved') readonly @endif>
                             </div>
                         </center>
 
@@ -135,7 +135,7 @@
         "columnDefs": [ {
             "targets": -1,
             "data": null,
-            "defaultContent": "<button class='btn btn-success'>Update</button>"
+            "defaultContent": "<button class='btn btn-success' @if($data['project'][0]['project_status'] == 'approved') disabled @endif>Update</button>"
         } ]
     });
 

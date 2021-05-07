@@ -29,11 +29,11 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="project_name_input">Project Name</label>
-                            <input type="text" class="form-control" id="project_name_input" placeholder="Project Name" value="{{ $data['project'][0]['project_name'] }}">
+                            <input type="text" class="form-control" id="project_name_input" placeholder="Project Name" value="{{ $data['project'][0]['project_name'] }}" @if($data['project'][0]['project_status'] == "approved") readonly @endif>
                         </div>
                         <div class="form-group">
                             <label for="project_address">Project Address</label>
-                            <input type="text" class="form-control" id="project_address_input" placeholder="Project Address" value="{{ $data['project'][0]['project_address'] }}">
+                            <input type="text" class="form-control" id="project_address_input" placeholder="Project Address" value="{{ $data['project'][0]['project_address'] }}" @if($data['project'][0]['project_status'] == "approved") readonly @endif>
                         </div>
                         <div class="form-group">
                             <label for="client_id">Select Client</label>
@@ -51,7 +51,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="plan_name_input">Plan Name</label>
-                                <input type="text" id="plan_name_input" class="form-control" placeholder="Plan Name" required>
+                                <input type="text" id="plan_name_input" class="form-control" placeholder="Plan Name" required @if($data['project'][0]['project_status'] == "approved") readonly @endif>
                             </div>
                         </div>
                     </div>
@@ -59,19 +59,19 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="plan_date_start">Plan Date Start</label>
-                                <input type="date" id="plan_date_start" class="form-control" required>
+                                <input type="date" id="plan_date_start" class="form-control" required @if($data['project'][0]['project_status'] == "approved") readonly @endif>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="plan_date_end">Plan Date End</label>
-                                <input type="date" id="plan_date_end" class="form-control" required>
+                                <input type="date" id="plan_date_end" class="form-control" required @if($data['project'][0]['project_status'] == "approved") readonly @endif>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="plan_parent">Plan Dependencies</label>
-                                <select id="plan_parent" class="custom-select">
+                                <select id="plan_parent" class="custom-select" @if($data['project'][0]['project_status'] == "approved") readonly @endif>
                                     <option value="" disabled selected>Select Dependencies</option>
                                 </select>
                             </div>
@@ -79,7 +79,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="plan_priority">Plan Priority</label>
-                                <select id="plan_priority" class="custom-select">
+                                <select id="plan_priority" class="custom-select" @if($data['project'][0]['project_status'] == "approved") readonly @endif>
                                     <option value="high">High</option>
                                     <option value="medium">Medium</option>
                                     <option value="low">Low</option>
@@ -87,7 +87,7 @@
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-primary mb-2" id="plan_btn">Add Plan</button>
+                    <button class="btn btn-primary mb-2" id="plan_btn" @if($data['project'][0]['project_status'] == "approved") disabled @endif>Add Plan</button>
                 </form>
                 <table class="table table-striped" id="plan_table">
                     <thead>
@@ -108,25 +108,25 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="supply_name">Supply Name</label>
-                                <input type="text" class="form-control" id="supply_name" required>
+                                <input type="text" class="form-control" id="supply_name" required @if($data['project'][0]['project_status'] == "approved") readonly @endif>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="supply_description">Supply Description</label>
-                                <input type="text" class="form-control" id="supply_description" required>
+                                <input type="text" class="form-control" id="supply_description" required @if($data['project'][0]['project_status'] == "approved") readonly @endif>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="supply_count">Supply Count</label>
-                                <input type="number" class="form-control" id="supply_count" required>
+                                <input type="number" class="form-control" id="supply_count" required @if($data['project'][0]['project_status'] == "approved") readonly @endif>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="supply_count">Action</label>
-                                <button class="btn btn-primary form-control" id="add_supply">Add Supply</button>
+                                <button class="btn btn-primary form-control" id="add_supply" required @if($data['project'][0]['project_status'] == "approved") disabled @endif>Add Supply</button>
                             </div>
                         </div>
                     </div>
@@ -144,7 +144,11 @@
                     </tbody>
                 </table>
                 <hr>
-                <!-- <button class="btn btn-success mt-2" id="submit_plan">Update Project</button> -->
+                <form action="{{ route('approveproject') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="id" value="{{ $data['project'][0]['id'] }}">
+                    <input type="submit" class="btn btn-primary" value="Approve This Project">
+                </form>
             </div>
         </div>
         <div class="modal fade" id="plan_modal" tabindex="-1" role="dialog" aria-labelledby="plan_name" aria-hidden="true">
@@ -176,14 +180,14 @@
         "columnDefs": [ {
             "targets": -1,
             "data": null,
-            "defaultContent": "<button class='btn btn-danger'>Delete</button>"
+            "defaultContent": "<button class='btn btn-danger' @if($data['project'][0]['project_status'] == 'approved') disabled @endif>Delete</button>"
         } ]
     });
     var supply_table = $("#supply_table").DataTable({
         "columnDefs": [ {
             "targets": -1,
             "data": null,
-            "defaultContent": "<button class='btn btn-danger'>Delete</button>"
+            "defaultContent": "<button class='btn btn-danger' @if($data['project'][0]['project_status'] == 'approved') disabled @endif>Delete</button>"
         } ]
     });
 
