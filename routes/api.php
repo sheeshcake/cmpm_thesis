@@ -3,6 +3,12 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\APILoginController;
+use App\Http\Controllers\APIForemanController;
+use App\Http\Controllers\APIClientController;
+use App\Http\Controllers\APIProjectmanagerController;
+use App\Http\Controllers\APIChatController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,4 +22,32 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+
+Route::post("/login", [APILoginController::class, 'dologin']);
+
+Route::prefix("/foreman")->group(function(){
+    Route::get('/', "APIForemanController@index");
+    Route::get('/projects', [APIForemanController::class, 'showprojects']);
+    Route::get('/project/{id}', [APIForemanController::class, 'showproject']);
+    Route::post('/project/update', "APIForemanController@updateproject");
+});
+
+Route::prefix("user")->group(function(){
+    Route::get('/', "APIForemanController@index");
+    Route::get('/projects', [APIForemanController::class, 'showprojects']);
+    Route::get('/project/{id}', [APIForemanController::class, 'showproject']);
+    Route::post('/project/update', "APIForemanController@updateproject");
+});
+Route::prefix("projectmanager")->group(function(){
+    Route::get('/', "APIForemanController@index");
+    Route::get('/projects', [APIForemanController::class, 'showprojects']);
+    Route::get('/project/{id}', [APIForemanController::class, 'showproject']);
+    Route::post('/project/update', "APIForemanController@updateproject");
+});
+
+Route::prefix('/chat')->group(function(){
+    Route::get("/project/{id}", "APIChatController@getchats");
+    Route::post("/reply", "APIChatController@replychat");
 });
