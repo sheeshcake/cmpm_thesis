@@ -15,7 +15,7 @@ class APIForemanController extends Controller
     }
 
     public function showprojects(){
-        $projects = Projects::all()->toArray();
+        $projects = Projects::where("project_status", "=", "approved")->get()->toArray();
         return json_encode($projects);
     }
 
@@ -45,6 +45,18 @@ class APIForemanController extends Controller
             return json_encode([
                 "msg" => "Some of Data is Missing",
                 "id" => $request->id
+            ]);
+        }
+    }
+
+    public function showtasks($id){
+        $tasks = Tasks::where("plan_id", "=", $id)->get()->toArray();
+        if($tasks){
+            return json_encode($tasks);
+        }else{
+            return json_encode([
+                "msg" => "No Data",
+                "id" => $id
             ]);
         }
     }

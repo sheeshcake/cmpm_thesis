@@ -10,6 +10,7 @@ use Illuminate\Http\Controllers\CivilEngineerController;
 use Illuminate\Http\Controllers\EmployeeController;
 use Illuminate\Http\Controllers\ProjectsController;
 use Illuminate\Http\Controllers\ClientController;
+use Illuminate\Http\Controllers\LoginHumanresourceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,6 +96,11 @@ use Illuminate\Http\Controllers\ClientController;
     Route::prefix('/logincivilengineer')->group(function(){
         Route::get("/", "LoginCivilEngineerController@ShowLogin");
         Route::post("/", "LoginCivilEngineerController@DoLogin")->name('logincivilengineer');
+    });
+
+    Route::prefix('/loginhumanresource')->group(function(){
+        Route::get("/", "LoginHumanresourceController@ShowLogin");
+        Route::post("/", "LoginHumanresourceController@DoLogin")->name('loginhumanresource');
     });
 
     Route::prefix('/loginforeman')->group(function(){

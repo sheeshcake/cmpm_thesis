@@ -2,14 +2,11 @@
 
 @section('content')
         <div class="row justify-content-center">
-            <div class="card p-3 my-5">
-                <h3>Welcome To</h3>
-                <h1>Construction Management Performance Monitoring System</h1>
-                <h6>By: Wendale Dy, Shandy Dominguez</h6>
-            </div>
-            <div class="card">
+            <div class="card mt-3">
                 <div class="card-header">
-                    <h1>System Featrues and Users</h1>
+                    <h3>Welcome To</h3>
+                    <h1>Construction Management Performance Monitoring System</h1>
+                    <h6>By: Wendale Dy, Shandy Dominguez</h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -33,6 +30,7 @@
                                 </div>
                                 <div class="tab-pane fade" id="list-hr" role="tabpanel" aria-labelledby="list-hr-list">
                                     <p>Hr mao ni ang mo add ug mga employee ug mag manage sa payroll</p>
+                                    <a href="{{ route('loginhumanresource') }}" class="btn btn-primary">Login</a>
                                 </div>
                                 <div class="tab-pane fade" id="list-tk" role="tabpanel" aria-labelledby="list-hr-list">
                                     <p>Time Keeper Mao ni sila ang mo attendance nga absenot nga mga trabahante</p>
