@@ -31,7 +31,8 @@ Route::prefix("/foreman")->group(function(){
     Route::get('/', "APIForemanController@index");
     Route::get('/projects', [APIForemanController::class, 'showprojects']);
     Route::get('/project/{id}', [APIForemanController::class, 'showproject']);
-    Route::get("/plan/{id}", [APIForemanController::class, 'showtasks']);   
+    Route::get("/plan/{id}", [APIForemanController::class, 'showtasks']); 
+    Route::post("/task/report", [APIForemanController::class, 'reporttask']);   
 });
 
 Route::prefix("user")->group(function(){
@@ -44,7 +45,9 @@ Route::prefix("projectmanager")->group(function(){
     Route::get('/', "APIForemanController@index");
     Route::get('/projects', [APIForemanController::class, 'showprojects']);
     Route::get('/project/{id}', [APIForemanController::class, 'showproject']);
-    Route::get("/plan/{id}", [APIForemanController::class, 'showtasks']);   
+    Route::get("/plan/{id}", [APIForemanController::class, 'showtasks']);
+    Route::get("/task/{id}", [APIForemanController::class, 'showtask']); 
+    Route::post("/task/report", [APIForemanController::class, 'reporttask']); 
 });
 
 Route::prefix('/chat')->group(function(){

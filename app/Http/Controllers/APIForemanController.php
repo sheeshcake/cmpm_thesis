@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Projects;
 use App\Models\Plans;
 use App\Models\Tasks;
+use App\Models\TaskReport;
 
 class APIForemanController extends Controller
 {
@@ -49,8 +50,37 @@ class APIForemanController extends Controller
         }
     }
 
+
+    public function reporttask(Request $request){
+        $file = $request->file("task_image");
+        if($file){
+            $files->move('img/tasks/', $files->getClientOriginalName()); 
+            $data = TaskReport::insert([
+                "task_id" => $request->task_id,
+                "user_id" => $request->user_id,
+                "task_details" => $request->task_details,
+                "task_picture" => $file->getClientOriginalName()
+            ]);
+        }
+    }
+
+
+    public function showtask($id){
+        $task = Tasks::where("id", "=", $id)->get()->toArray();
+        $task[0]["task_reports"] = TaskReport::where("task_id", "=", $id)->get()->toArray();
+        if($task){
+            return json_encode($task[0]);
+        }else{
+            return json_encode([
+                "msg" => "No Data",
+                "id" => $id
+            ]);
+        }
+    }
+
     public function showtasks($id){
-        $tasks = Tasks::where("plan_id", "=", $id)->get()->toArray();
+        $tasks = Tasks::join("task_report", "task_report.task_id", "=", "tasks.id")
+                    ->where("tasks.plan_id", "=", $id)->get()->toArray();
         if($tasks){
             return json_encode($tasks);
         }else{
