@@ -9,6 +9,7 @@ use App\Models\Tasks;
 use App\Models\User;
 use App\Models\Clients;
 use App\Models\Supplies;
+use App\Models\SupplyPurchased;
 
 use Auth;
 
@@ -62,6 +63,10 @@ class ProjectController extends Controller
         $project_plans = Plans::where("project_id", "=", $request->project_id)->get()->toArray();
         $project_data["plans"] = $project_plans;
         $project_supplies = Supplies::where("project_id", "=", $request->project_id)->get()->toArray();
+        foreach($project_supplies as $index => $supplies){
+            $p_supply = SupplyPurchased::where("supply_id", "=", $supplies['id'])->sum('supply_count_purchased');
+            $project_supplies[$index]["purchased"] = $p_supply;
+        }
         $project_data["supplies"] = $project_supplies;
         foreach($project_plans as $key => $plans){
             $project_tasks = Tasks::where("plan_id", "=", $plans["id"])->get()->toArray();
@@ -161,21 +166,6 @@ class ProjectController extends Controller
             $plans->plan_dependency = $dependency;
             $plans->save();
             $plan_id = $plans->id;
-            // if(isset($plans_data["tasks"])){
-            //     if(count($plans_data["tasks"]) > 0){
-            //         foreach($plans_data["tasks"] as $tasks_data){
-            //             $task = new Tasks();
-            //             $task->plan_id = $plan_id;
-            //             $task->task_name = $tasks_data["task_name"];
-            //             $task->task_priority = $tasks_data["task_priority"];
-            //             $task->task_date_start = $tasks_data["task_start"];
-            //             $task->task_date_end = $tasks_data["task_end"];
-            //             $task->user_id = $tasks_data["assigned_to"];
-            //             $task->task_status = "pending";
-            //             $task->save();
-            //         }
-            //     }
-            // }
         }
         foreach($request->data['supplies'] as $supply_data){
             $supplies = new Supplies();

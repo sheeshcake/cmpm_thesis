@@ -307,6 +307,7 @@
                 },
                 success: function(d){
                     d = JSON.parse(d);
+                    task_table.clear().draw();
                     d.forEach(async (item) => {
                         task_table.row.add([
                             item.task_id,

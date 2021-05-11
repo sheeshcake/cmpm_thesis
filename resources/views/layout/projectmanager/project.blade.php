@@ -232,9 +232,10 @@
     $('#plan_table tbody').on( 'click', 'button', function () {
         var rowId = table.row( $(this).parents('tr') ).index();
         db_data.plans.splice(rowId, 1);
+        $("#plan_parent option[value='plan-" + rowId + "']").remove();
         table.row(rowId).remove().draw();
         data.removeRow(rowId);
-        console.log(db_data.plans.length);
+        console.log(rowId);
         if(db_data.plans.length > 0){
             chart.draw(data);
         }else{
@@ -297,9 +298,8 @@
         chart = new google.visualization.Gantt(document.getElementById('chart_div'));
         var itemsProcessed = 0;
         db_data["plans"].forEach(async (element, index, array) => {
-            $dependency = element["plan_dependency"];
-            if($dependency == "plan-null" || $dependency == "null"){
-                $dependency = null;
+            if(element["plan_dependency"] == "plan-null" || element["plan_dependency"] == "null"){
+                element["plan_dependency"] = null;
             }
             var plan_id = "plan-" + index;
             data.addRow([
@@ -310,7 +310,7 @@
                 new Date(element["plan_date_end"]),
                 1,
                 0,
-                $dependency
+                element["plan_dependency"]
             ]);
             table.row.add([
                 element["id"],
@@ -327,7 +327,7 @@
                 element["id"],
                 element["supply_name"],
                 element["supply_description"],
-                element["supply_count"]
+                element["purchased"] + "/" + element["supply_count"],
             ]).draw();
         });
         var trackHeight = 40;

@@ -59,8 +59,11 @@ use Illuminate\Http\Controllers\LoginHumanresourceController;
             Route::post("/removesupply", "SupplyController@RemoveSupply")->name("removesupply");
             Route::post("/updatesupply", "SupplyController@UpdateSupply")->name("updatesupply");
             
-            
-
+            //Supply CRUD
+            Route::post("/supply/getsupply", "PurchasedSupplyController@GetData")->name("supply.getsupply");
+            Route::post("/supply/addsupply", "PurchasedSupplyController@AddSupply")->name("supply.addsupply");
+            Route::post("/supply/removesupply", "PurchasedSupplyController@RemoveSupply")->name("supply.removesupply");
+            Route::post("/supply/updatesupply", "PurchasedSupplyController@UpdateSupply")->name("supply.updatesupply");
         });
     });
 

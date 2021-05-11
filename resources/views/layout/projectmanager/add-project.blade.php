@@ -308,6 +308,7 @@
     $('#plan_table tbody').on( 'click', 'button', function () {
         var rowId = table.row( $(this).parents('tr') ).index();
         project_data.plans.splice(rowId, 1);
+        $("#plan_parent option[value='plan-" + rowId + "']").remove();
         table.row(rowId).remove().draw();
         data.removeRow(rowId);
         console.log(project_data.plans.length);

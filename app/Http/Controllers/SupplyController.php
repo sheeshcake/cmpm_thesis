@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Supplies;
+use App\Models\SupplyPurchased;
 use App\Models\Projects;
 use Auth;
 
@@ -50,15 +51,15 @@ class SupplyController extends Controller
 
     public function UpdateSupply(Request $request){
 
-        $data = Supplies::where("id", "=", $request->id)
-                ->update([
-                    "supply_price" => $request->supply_price
-                ]);
-        if($data){
-            echo "Supply Updated!";
-        }else{
-            echo "Error on Updating supply";
-        }
+        // $data = Supplies::where("id", "=", $request->id)
+        //         ->update([
+        //             "supply_price" => $request->supply_price
+        //         ]);
+        // if($data){
+        //     echo "Supply Updated!";
+        // }else{
+        //     echo "Error on Updating supply";
+        // }
         
     }
 }

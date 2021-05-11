@@ -52,7 +52,6 @@
                         <th>Supply Name</th>
                         <th>Supply Description</th>
                         <th>Supply Count</th>
-                        <th>Price</th>
                         <th>Action</th>
                     </thead>
                     <tbody>
@@ -63,7 +62,6 @@
                         <th>Supply Name</th>
                         <th>Supply Description</th>
                         <th>Supply Count</th>
-                        <th>Price</th>
                         <th>Action</th>
                     </tfoot>
                 </table>
@@ -71,7 +69,7 @@
             </div>
         </div>
         <div class="modal fade" id="supply_modal" tabindex="-1" role="dialog" aria-labelledby="supply_modaltitle" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="supply_modaltitle">Update Supply</h5>
@@ -91,20 +89,50 @@
                                 <p id="supply_desc"></p>
                             </div>
                         </div>
-                        <hr>
-                        <center>
-                            <input type="hidden" id="supply_id">
-                            <div class="form-group">
+                        <hr><input type="hidden" id="supply_id">
+                        <div class="row">
+                            <div class="form-group col">
+                                <label for="">Store Purchased</label>
+                                <input type="text" id="store_purchased" required class="form-control" @if($data['project'][0]['project_status'] == 'approved') readonly @endif>
+                            </div>
+                            <div class="form-group col">
+                                <label for="">Supply Count</label>
+                                <input type="number" step="any" id="supply_count_purchased" required class="form-control" @if($data['project'][0]['project_status'] == 'approved') readonly @endif>
+                            </div>
+                            <div class="form-group col">
                                 <label for="">Supply Price</label>
                                 <input type="number" step="any" id="supply_price" required class="form-control" @if($data['project'][0]['project_status'] == 'approved') readonly @endif>
                             </div>
-                        </center>
+                        </div>
+                        <hr>
+                        <h3>Supply Details</h3>
+                        <table class="table table-striped" id="supply_purchased_table">
+                            <thead>
+                                <th>ID</th>
+                                <th>Store Name</th>
+                                <th>Supply Purchased Count</th>
+                                <th>Supply Price</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
 
+                            </tbody>
+                            <tfoot>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th>Total</th>
+                                <th></th>
+                                <th>Action</th>
+                            </tfoot>
+                        </table>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Save changes</button>
                     </div>
+
                 </form>
                 </div>
             </div>
@@ -119,6 +147,26 @@
 <script type="text/javascript">
     var data, chart, db_data, task_counter = 0, $counter = 0;
     var supply_table = $("#supply_table").DataTable({
+        "drawCallback": function () {
+            // var api = this.api();
+            // $( api.table().footer() ).html(
+            //     '<tr>' +
+            //         '<td></td>' +
+            //         '<td></td>' +
+            //         '<td></td>' +
+            //         '<td>Total</td>' +
+            //         '<td>' + api.column( 4, {page:'current'} ).data().sum() + '</td>' +
+            //         '<td></td>' +
+            //     '</tr>'
+            // );
+        },
+        "columnDefs": [ {
+            "targets": -1,
+            "data": null,
+            "defaultContent": "<button class='btn btn-success' @if($data['project'][0]['project_status'] == 'approved') disabled @endif>Update</button>"
+        } ]
+    });
+    var supply_purchased_table = $("#supply_purchased_table").DataTable({
         "drawCallback": function () {
             var api = this.api();
             $( api.table().footer() ).html(
@@ -135,9 +183,37 @@
         "columnDefs": [ {
             "targets": -1,
             "data": null,
-            "defaultContent": "<button class='btn btn-success' @if($data['project'][0]['project_status'] == 'approved') disabled @endif>Update</button>"
+            "defaultContent": "<button type='button' class='btn btn-danger' @if($data['project'][0]['project_status'] == 'approved') disabled @endif>Delete</button>"
         } ]
     });
+
+    function update_supply_details(){
+        supply_purchased_table.clear().draw();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: "{{route('supply.getsupply')}}",
+            method: "POST",
+            data:{
+                "id" : $("#supply_id").val()
+            },
+            success: function(e){
+                e = JSON.parse(e);
+                e.forEach(async (element, index, array) => {
+                    supply_purchased_table.row.add([
+                        element["id"],
+                        element["store_purchased"],
+                        element["supply_count_purchased"],
+                        element["supply_price"],
+                        element["supply_price"] * element["supply_count_purchased"],
+                    ]).draw();
+                });
+            }
+        });
+    }
 
     $('#supply_table tbody').on( 'click', 'button', function () {
         var rowId = supply_table.row( $(this).parents('tr') ).index();
@@ -145,7 +221,30 @@
         $("#supply_name").text(supply_table.row(rowId).data()[1]);
         $("#supply_count").text(supply_table.row(rowId).data()[3]);
         $("#supply_desc").text(supply_table.row(rowId).data()[2]);
+        update_supply_details();
         $("#supply_modal").modal('show');
+    });
+
+    $('#supply_purchased_table tbody').on( 'click', 'button', function () {
+        var rowId = supply_purchased_table.row( $(this).parents('tr') ).index();
+        var id = supply_purchased_table.row(rowId).data()[0];
+        supply_table.row(rowId).remove().draw();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: "{{route('supply.removesupply')}}",
+            method: "POST",
+            data:{
+                "id" : id
+            },
+            success: function(e){
+                e = JSON.parse(e);
+                alert(e["alert"]);
+            }
+        });
     });
 
     $("#supply_form").submit(function(e){
@@ -156,15 +255,18 @@
             }
         });
         $.ajax({
-            url: "{{route('updatesupply')}}",
+            url: "{{route('supply.addsupply')}}",
             method: "POST",
             data:{
-                "id" : $("#supply_id").val(),
+                "supply_id" : $("#supply_id").val(),
+                "store_purchased" : $("#store_purchased").val(),
+                "supply_count_purchased" : $("#supply_count_purchased").val(),
                 "supply_price" : $("#supply_price").val()
             },
             success: function(e){
-                alert(e);
-                init_data(true);
+                e = JSON.parse(e);
+                update_supply_details();
+                alert(e["alert"]);
             }
         });
     });
@@ -224,8 +326,7 @@
                 element["id"],
                 element["supply_name"],
                 element["supply_description"],
-                element["supply_count"],
-                element["supply_price"]
+                element["purchased"] + "/" + element["supply_count"],
             ]).draw();
         });
         var trackHeight = 40;

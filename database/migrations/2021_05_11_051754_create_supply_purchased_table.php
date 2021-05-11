@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTaskReportTable extends Migration
+class CreateSupplyPurchasedTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateTaskReportTable extends Migration
      */
     public function up()
     {
-        Schema::create('task_report', function (Blueprint $table) {
+        Schema::create('supply_purchased', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("task_id");
-            $table->foreignId("user_id");
-            $table->longText("task_details");
-            $table->string("task_picture");
+            $table->foreignId("supply_id");
+            $table->string("store_purchased");
+            $table->string("supply_count_purchased");
+            $table->string("supply_price");
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class CreateTaskReportTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('task_report');
+        Schema::dropIfExists('supply_purchased');
     }
 }
