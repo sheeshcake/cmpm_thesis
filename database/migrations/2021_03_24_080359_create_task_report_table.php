@@ -19,6 +19,8 @@ class CreateTaskReportTable extends Migration
             $table->foreignId("user_id");
             $table->longText("task_details");
             $table->string("task_picture");
+            $table->string("is_ce_approved")->default("false");
+            $table->string("is_pm_approved")->default("false");
             $table->timestamps();
         });
     }

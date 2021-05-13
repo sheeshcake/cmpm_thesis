@@ -27,7 +27,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post("/login", [APILoginController::class, 'dologin']);
 
-Route::prefix("/foreman")->group(function(){
+Route::prefix("/projectmanager")->group(function(){
     Route::get('/', "APIForemanController@index");
     Route::get('/projects', [APIForemanController::class, 'showprojects']);
     Route::get('/project/{id}', [APIForemanController::class, 'showproject']);
@@ -41,7 +41,7 @@ Route::prefix("user")->group(function(){
     Route::get('/project/{id}', [APIClientController::class, 'showproject']);
     Route::post('/project/update', "APIForemanController@updateproject");
 });
-Route::prefix("projectmanager")->group(function(){
+Route::prefix("foreman")->group(function(){
     Route::get('/', "APIForemanController@index");
     Route::get('/projects', [APIForemanController::class, 'showprojects']);
     Route::get('/project/{id}', [APIForemanController::class, 'showproject']);
