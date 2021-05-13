@@ -61,21 +61,32 @@ class APIForemanController extends Controller
             "task_details" => $task_details,
             "user_id" => $request->user_id,
             "task_picture" => "task_" . $request->task_id . ".jpg"
-        ]);
+        ])->id;
         $data1 = explode(',', $request->base64image);
         $bin = base64_decode($data1[1]);
         $im = imageCreateFromString($bin);
         imagejpeg($im, "task_" . $request->task_id . ".jpg");
         imagedestroy($im);
-        echo $request->base64image;
+        $report = TaskReport::where("id", "=", $task_id)->get()->toArray();
+        return json_encode($report[0]);
     }
 
 
     public function showtask($id){
         $task = Tasks::where("id", "=", $id)->get()->toArray();
-        $task[0]["task_reports"] = TaskReport::where("task_id", "=", $id)->get()->toArray();
+        $report = TaskReport::where("task_id", "=", $id)->get()->toArray();
         if($task){
-            return json_encode($task[0]);
+            if(isset($report[0])){
+                return json_encode([
+                    "task" => $task[0],
+                    "reports" => $report[0]
+                ]);
+            }else{
+                return json_encode([
+                    "task" => $task[0]]
+                );
+            }
+
         }else{
             return json_encode([
                 "msg" => "No Data",
@@ -85,7 +96,7 @@ class APIForemanController extends Controller
     }
 
     public function showtasks($id){
-        $tasks = Tasks::where("tasks.plan_id", "=", $id)->get()->toArray();
+        $tasks = Tasks::where("plan_id", "=", $id)->get()->toArray();
         if($tasks){
             return json_encode($tasks);
         }else{
