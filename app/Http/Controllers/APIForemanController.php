@@ -52,16 +52,22 @@ class APIForemanController extends Controller
 
 
     public function reporttask(Request $request){
-        $file = $request->file("task_image");
-        if($file){
-            $files->move('img/tasks/', $files->getClientOriginalName()); 
-            $data = TaskReport::insert([
-                "task_id" => $request->task_id,
-                "user_id" => $request->user_id,
-                "task_details" => $request->task_details,
-                "task_picture" => $file->getClientOriginalName()
-            ]);
+        $task_details = "All Good! :)";
+        if($request->task_details != null){
+            $task_details = $request->task_details;
         }
+        $task_id = TaskReport::create([
+            "task_id" => $request->task_id,
+            "task_details" => $task_details,
+            "user_id" => $request->user_id,
+            "task_picture" => "task_" . $request->task_id . ".jpg"
+        ]);
+        $data1 = explode(',', $request->base64image);
+        $bin = base64_decode($data1[1]);
+        $im = imageCreateFromString($bin);
+        imagejpeg($im, "task_" . $request->task_id . ".jpg");
+        imagedestroy($im);
+        echo $request->base64image;
     }
 
 
@@ -79,8 +85,7 @@ class APIForemanController extends Controller
     }
 
     public function showtasks($id){
-        $tasks = Tasks::join("task_report", "task_report.task_id", "=", "tasks.id")
-                    ->where("tasks.plan_id", "=", $id)->get()->toArray();
+        $tasks = Tasks::where("tasks.plan_id", "=", $id)->get()->toArray();
         if($tasks){
             return json_encode($tasks);
         }else{
