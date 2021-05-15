@@ -7,8 +7,10 @@ use App\Models\TaskReport;
 use App\Models\Tasks;
 use App\Models\Plans;
 use App\Models\Projects;
+use App\Models\User;
 
-class APIProjectmanagerController extends Controller
+
+class APICivilengineerController extends Controller
 {
 
     public function showprojects(){
@@ -54,9 +56,6 @@ class APIProjectmanagerController extends Controller
     public function approve_report(Request $request){
         $report_id = TaskReport::where("id", "=", $request->id)->update([
             "is_ce_approved" => "true"
-        ]);
-        Tasks::where("id", "=", $request->task_id)->update([
-            "task_status" => "done"
         ]);
         return json_encode([
             "msg" => "Task Approved!"
