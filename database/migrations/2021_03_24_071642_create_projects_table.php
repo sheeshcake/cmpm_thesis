@@ -18,6 +18,8 @@ class CreateProjectsTable extends Migration
             $table->foreignId("client_id");
             $table->string("project_name");
             $table->string("project_address");
+            $table->string("project_estimate");
+            $table->string("project_contract");
             $table->string("project_status")->default("planning");
             $table->timestamps();
         });

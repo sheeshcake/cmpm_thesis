@@ -16,6 +16,7 @@ class CreatePlansTable extends Migration
         Schema::create('plans', function (Blueprint $table) {
             $table->id();
             $table->foreignId("project_id");
+            $table->string("plan_image");
             $table->string("plan_name");
             $table->string("plan_priority");
             $table->string("plan_dependency");

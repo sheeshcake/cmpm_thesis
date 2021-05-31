@@ -29,6 +29,10 @@
                             <input type="text" class="form-control" id="project_address_input" placeholder="Project Address">
                         </div>
                         <div class="form-group">
+                            <label for="project_estimate">Project Esimate</label>
+                            <input type="number" class="form-control" id="project_esimate_input" placeholder="Project Esimate">
+                        </div>
+                        <div class="form-group">
                             <label for="client_id">Select Client</label>
                             <select name="client_id" id="client_id" class="custom-select">
                                 @foreach($data['clients'] as $client)
@@ -67,6 +71,18 @@
                                 <select id="plan_parent" class="custom-select">
                                     <option value="" disabled selected>Select Dependencies</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="plan_files">Plan Image</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Upload</span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="plan_files" required>
+                                    <label class="custom-file-label" for="plan_files">Plan Image</label>
+                                </div>
                             </div>
                         </div>
                         <div class="col">
@@ -216,6 +232,7 @@
     var project_data = {
         project_name: "New Project",
         project_address: "",
+        plan_esimate: "",
         client_id: 1,
         plans:[],
         supplies:[],
@@ -280,6 +297,11 @@
         console.log(project_data);
     });
 
+    $("#project_esimate_input").on("input", function(){
+        project_data.project_estimate = $(this).val();
+        console.log(project_data);
+    });
+
     $("#submit_plan").click(function(){
         $.ajaxSetup({
             headers: {
@@ -319,7 +341,17 @@
         }
         
     });
-
+    const getBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    async function GetBase(){
+        var file = document.querySelector('#plan_files').files[0];
+        let result = await getBase64(file).then(res => res.data);
+        return result;
+    }
     function drawChart() {
         data = new google.visualization.DataTable();
         data.addColumn('string', 'Task ID');
@@ -333,6 +365,7 @@
         chart = new google.visualization.Gantt(document.getElementById('chart_div'));
         $("#plan-details").on("submit", function(e){
             e.preventDefault();
+            var file_base = GetBase();
             if($("plan_input input[required]").filter(function () {
                     return $.trim($(this).val()).length == 0
                 }).length == 0){
@@ -365,9 +398,11 @@
                     "plan_start" : $("#plan_date_start").val(),
                     "plan_end" : $("#plan_date_end").val(),
                     "plan_priority" : $("#plan_priority").val(),
+                    "plan_image": file_base,
                     "plan_dependency" : parent,
                     "tasks" : []
                 });
+                console.log(project_data);
                 chart.draw(data, {height: 300, title: project_data.project_name});
                 $counter++;
             }
