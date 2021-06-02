@@ -254,7 +254,6 @@
     });
     google.charts.load('current', {'packages':['gantt']});
     google.charts.setOnLoadCallback(drawChart); 
-
     $("#client_id").on("change", function(){
         project_data.client_id = $(this).val();
     });
@@ -341,17 +340,22 @@
         }
         
     });
-    const getBase64 = file => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
-    async function GetBase(){
-        var file = document.querySelector('#plan_files').files[0];
-        let result = await getBase64(file).then(res => res.data);
-        return result;
+    var base64;
+    function getImage() {
+
+        var reader = new FileReader();
+        var f = document.getElementById("plan_files").files;
+        reader.onloadend = function () {
+            base64 = reader.result;
+        }
+        reader.readAsDataURL(f[0]);
+
     }
+    $(document).ready(function(){
+        $("#plan_files").on("change", function(){
+            getImage();
+        });
+    });
     function drawChart() {
         data = new google.visualization.DataTable();
         data.addColumn('string', 'Task ID');
@@ -365,7 +369,6 @@
         chart = new google.visualization.Gantt(document.getElementById('chart_div'));
         $("#plan-details").on("submit", function(e){
             e.preventDefault();
-            var file_base = GetBase();
             if($("plan_input input[required]").filter(function () {
                     return $.trim($(this).val()).length == 0
                 }).length == 0){
@@ -398,7 +401,7 @@
                     "plan_start" : $("#plan_date_start").val(),
                     "plan_end" : $("#plan_date_end").val(),
                     "plan_priority" : $("#plan_priority").val(),
-                    "plan_image": file_base,
+                    "plan_image": base64,
                     "plan_dependency" : parent,
                     "tasks" : []
                 });
