@@ -29,10 +29,6 @@
                             <input type="text" class="form-control" id="project_address_input" placeholder="Project Address">
                         </div>
                         <div class="form-group">
-                            <label for="project_estimate">Project Esimate</label>
-                            <input type="number" class="form-control" id="project_esimate_input" placeholder="Project Esimate">
-                        </div>
-                        <div class="form-group">
                             <label for="client_id">Select Client</label>
                             <select name="client_id" id="client_id" class="custom-select">
                                 @foreach($data['clients'] as $client)
@@ -40,6 +36,21 @@
                                 @endforeach
                             </select>
                         </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="project_estimate">Project Estimate</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1">₱</span>
+                            </div>
+                            <input type="number" class="form-control" id="project_esimate_input" placeholder="Project Esimate">
+                        </div>
+                    </div>
+                    <div class="form-group col">
+                        <label for="project_contract">Project Contract</label>
+                        <input type="file" class="form-control" id="project_contract_input" placeholder="Project Contract">
                     </div>
                 </div>
                 <hr>
@@ -232,7 +243,8 @@
     var project_data = {
         project_name: "New Project",
         project_address: "",
-        plan_esimate: "",
+        project_estimate: "",
+        project_contract: "",
         client_id: 1,
         plans:[],
         supplies:[],
@@ -300,7 +312,7 @@
         project_data.project_estimate = $(this).val();
         console.log(project_data);
     });
-
+ 
     $("#submit_plan").click(function(){
         $.ajaxSetup({
             headers: {
@@ -351,9 +363,22 @@
         reader.readAsDataURL(f[0]);
 
     }
+    function getContract() {
+
+        var reader = new FileReader();
+        var f = document.getElementById("project_contract_input").files;
+        reader.onloadend = function () {
+            project_data.project_contract  = reader.result;
+        }
+        reader.readAsDataURL(f[0]);
+
+    }
     $(document).ready(function(){
         $("#plan_files").on("change", function(){
             getImage();
+        });
+        $("#project_contract_input").on("change", function(){
+            getContract();
         });
     });
     function drawChart() {

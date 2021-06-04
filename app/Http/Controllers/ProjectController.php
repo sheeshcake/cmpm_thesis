@@ -149,6 +149,8 @@ class ProjectController extends Controller
         $project = new Projects();
         $project->project_name = $request->data["project_name"];
         $project->project_address = $request->data["project_address"];
+        $project->project_estimate = $request->data["project_estimate"];
+        $project->project_contract = $request->data["project_contract"];
         $project->client_id = $request->data["client_id"];
         $project->save();
         $project_id = $project->id;
@@ -163,6 +165,7 @@ class ProjectController extends Controller
             $plans->plan_date_start = $plans_data["plan_start"];
             $plans->plan_date_end = $plans_data["plan_end"];
             $plans->plan_priority = $plans_data["plan_priority"];
+            $plans->plan_image = $plans_data["plan_image"];
             $plans->plan_dependency = $dependency;
             $plans->save();
             $plan_id = $plans->id;

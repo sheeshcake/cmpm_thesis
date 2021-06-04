@@ -45,6 +45,22 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="project_estimate">Project Estimate</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1">₱</span>
+                            </div>
+                            <input type="number" value="{{ $data['project'][0]['project_estimate'] }}" class="form-control" id="project_esimate_input" placeholder="Project Esimate">
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-center">
+                    <h4>Contract</h4>
+                </div>
+                <iframe width="100%" height="500px" src="{{ $data['project'][0]['project_contract'] }}" frameborder="0"></iframe>
                 <hr>
                 <form action="#" id="plan-details">
                     <div class="row" id="plan_input">
@@ -429,6 +445,9 @@
             $("#plan_name").text(data.getValue(selection.row, 1));
             var plan_details = data.getValue(selection.row, 0).split("-");
             $("#plan_tasks").html("");
+            $("#plan_tasks").append(
+                "<img src='" + db_data["plans"][plan_details[1]]["plan_image"] + "' width='100%' height='300px'><hr><div class='d-flex justify-content-center'><h4>Tasks</h4></div>"
+            );
             db_data["plans"][plan_details[1]]["tasks"].forEach(function(element){
                 $("#plan_tasks").append(
                     '<div class="card mt-3">' +
